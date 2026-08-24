@@ -1,1 +1,17 @@
+# OS generated files #
+######################
+.DS_Store
+__MACOSX
+# Jupiter Notebook #
+.pytest_cache
+__pycache__
+*checkpoint.ipynb
+*.ipynb_checkpoints
+
+# folders with non-gitable content
 raw_data/
+notebooks/
+images/
+
+# non-gitable files
+.env
