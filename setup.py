@@ -1,3 +1,6 @@
+"""Setup file for the Visual Geoloc Package to be installable by pip.
+"""
+
 from setuptools import find_packages
 from setuptools import setup
 
