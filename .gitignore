@@ -8,10 +8,36 @@ __pycache__
 *checkpoint.ipynb
 *.ipynb_checkpoints
 
+# Visual Studio Code
+.vscode/
+
+# PyPI configuration file
+.pypirc
+
 # folders with non-gitable content
 raw_data/
 notebooks/
 images/
 
-# non-gitable files
+# Environments
 .env
+.env.yaml
+.envrc
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Project
+notebooks/*
+data/*
+raw_data/*
+processed_data/*
+model/*
+!model/.gitkeep
+!processed_data/.gitkeep
+!raw_data/.gitkeep
+*.ipynb
+*.zip
