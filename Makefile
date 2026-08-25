@@ -1,3 +1,8 @@
+default: pylint
+
+pylint:
+	find . -iname "*.py" -not -path "./.git/*" | xargs -n1 -I {}  pylint --output-format=colorized {}; true
+
 clean:
 	@rm -f */version.txt
 	@rm -f .coverage
