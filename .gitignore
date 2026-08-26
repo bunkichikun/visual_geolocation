@@ -7,6 +7,7 @@ __MACOSX
 __pycache__
 *checkpoint.ipynb
 *.ipynb_checkpoints
+*.ipynb
 
 # Visual Studio Code
 .vscode/

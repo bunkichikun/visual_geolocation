@@ -11,13 +11,30 @@ All the works around the predicion model
 
 
 def initialize_model(input_shape: tuple) -> Model:
-    pass
 
-    #return model
+    model.add(Input(shape=SIZE_OF_THE_PICTURE)))
+    model.add(layers.Conv2D(8, (4, 4), activation="relu",padding='same'))
+
+    model.add(layers.MaxPool2D(pool_size=(2, 2)))
+
+    model.add(layers.Flatten())
+
+    ### One Fully Connected layer - "Fully Connected" is equivalent to saying "Dense"
+    model.add(layers.Dense(10, activation='relu'))
+
+    ### Last layer - Classification Layer with NUMBER_OF_GOOD_GEOCEL outputs corresponding to NUMBER_OF_GOOD_GEOCEL digits
+    model.add(layers.Dense(NUMBER_OF_GOOD_GEOCELL,activation='softmax'))
+
+
+    return model
 
 
 def compile_model(model : Model) -> Model:
-    pass
+    model.compile(loss='categorical_crossentropy',
+              optimizer='adam',
+              metrics=['accuracy'])
+
+    return model
 
 
 def train_model(
