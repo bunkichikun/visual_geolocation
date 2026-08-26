@@ -23,7 +23,7 @@ def initialize_model(input_shape: tuple) -> Model:
     model.add(layers.Dense(10, activation='relu'))
 
     ### Last layer - Classification Layer with NUMBER_OF_GOOD_GEOCEL outputs corresponding to NUMBER_OF_GOOD_GEOCEL digits
-    model.add(layers.Dense(NUMBER_OF_GOOD_GEOCELL,activation='softmax'))
+    model.add(layers.Dense(CLASS_NUMBER,activation='softmax'))
 
 
     return model

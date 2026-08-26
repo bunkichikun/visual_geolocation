@@ -8,6 +8,7 @@ import math
 from visual_geolocation.interface.main import *
 from visual_geolocation.ml_logic.preprocessing import *
 from visual_geolocation.interface.workflow import *
+from visual_geolocation.ml_logic.registry import *
 
 
 
