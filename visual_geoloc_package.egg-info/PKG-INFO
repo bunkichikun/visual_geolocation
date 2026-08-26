@@ -1,0 +1,8 @@
+Metadata-Version: 2.1
+Name: visual-geoloc-package
+Version: 0.0.1
+Summary: Visual Geolocation Package (base package for explo)
+Author: Benoît Libeau, et al. see contributors
+Author-email: benoit.libeau@ensta.org
+License: MIT
+License-File: LICENSE
