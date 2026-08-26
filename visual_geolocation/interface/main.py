@@ -5,6 +5,9 @@ import geopandas as gpd
 import os
 import math
 
+
+from visual_geolocation.ml_logic.registry import *
+
 from visual_geolocation.ml_logic.preprocessing import preprocess_features
 #from visual_geolocation.interface.workflow import
 from visual_geolocation.utils import haversine, geoscore, coord_to_geocell, geocell_to_country
