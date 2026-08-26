@@ -81,8 +81,10 @@ def evaluate_random(test_df):
     # TODO Later, when test_final.csv is available
     # return 1 if the predicted country is right, 0 else
 
-    pred_country = geocell_to_country(coord_to_geocell(pred_lon, pred_lat))
-    target_country = test_df.loc[t_i, "unique_country"]
+    #pred_country = geocell_to_country(coord_to_geocell(pred_lon, pred_lat))
+    #target_country = test_df.loc[t_i, "unique_country"]
+
+    #class_to_geocell(0)
 
     #TODO
     # accuracy = target_country == pred_country but check that the country codes are the same...

@@ -1,15 +1,22 @@
 """Handy functions for the Visual Geolocation Package
 """
+import pickle
+import os
+
 import geopandas as gpd
 import numpy as np
 
 from shapely.geometry import Point
 
-from visual_geolocation.params import GEOCELL_SIZE, LON_MIN, LON_MAX, LAT_MIN, LAT_MAX
+from visual_geolocation.params import GEOCELL_SIZE, LON_MIN, LON_MAX, LAT_MIN, LAT_MAX, RAW_DATA_PATH,\
+    CLASS_TO_GEOCELL_MAP, IMAGES_PATH, BOUNDARIES_JSON
 
 EARTH_RADIUS = 6371
 GEOSCORE_MODULE = 5000
 GEOSCORE_FACTOR = 1492.7
+
+with open(os.path.join(RAW_DATA_PATH, CLASS_TO_GEOCELL_MAP), 'rb') as handle:
+    CLASS_TO_GEOCELL = pickle.load(handle)
 
 
 def coord_to_geocell(lon, lat, geocell_size = GEOCELL_SIZE):
@@ -53,7 +60,7 @@ def geocell_to_country(geocell_idx):
     lon, lat = geocell_to_coord(geocell_idx)
 
     # geojson with countries from https://geojson-maps.kyd.au/
-    countries_df = gpd.read_file("../images/custom.geo_lite.json")
+    countries_df = gpd.read_file(os.path.join(IMAGES_PATH, BOUNDARIES_JSON))
 
     # Create GeoDataFrame for the point
     point_gdf = gpd.GeoDataFrame(
@@ -70,11 +77,9 @@ def geocell_to_country(geocell_idx):
     return result["sovereignt"].iloc[0], result["sov_a3"].iloc[0]
 
 
-def class_to_geocell():#class_idx):
-    """Returns the geocell index corresponding to the class index"""
-    ## TODO compute geocell idx from class index for example by reusing a dict
-    # initiated when building
-    pass
+def class_to_geocell(class_idx):
+    """Returns the geocell index corresponding to the class index. This is loaded from a pickle file"""
+    return CLASS_TO_GEOCELL[class_idx]
 
 
 def haversine(lon_1, lat_1, lon_2, lat_2):
