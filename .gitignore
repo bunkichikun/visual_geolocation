@@ -7,6 +7,7 @@ __MACOSX
 __pycache__
 *checkpoint.ipynb
 *.ipynb_checkpoints
+*.ipynb
 
 # Visual Studio Code
 .vscode/
@@ -41,3 +42,4 @@ model/*
 !raw_data/.gitkeep
 *.ipynb
 *.zip
+*.egg-info

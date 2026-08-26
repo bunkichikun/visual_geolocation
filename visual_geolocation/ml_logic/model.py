@@ -12,7 +12,7 @@ All the works around the predicion model
 
 def initialize_model(input_shape: tuple) -> Model:
 
-    model.add(Input(shape=SIZE_OF_THE_PICTURE))
+    model.add(Input(shape=SIZE_OF_THE_PICTURE)))
     model.add(layers.Conv2D(8, (4, 4), activation="relu",padding='same'))
 
     model.add(layers.MaxPool2D(pool_size=(2, 2)))
