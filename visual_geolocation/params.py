@@ -13,3 +13,5 @@ LAT_MIN = os.environ.get("LAT_MIN")
 LAT_MAX = os.environ.get("LAT_MAX")
 
 CLASS_NUMBER = os.environ.get("CLASS_NUMBER")
+BATCH_SIZE = os.environ.get("BATCH_SIZE")
+IMG_FOLDER = os.environ.get("IMG_FOLDER")

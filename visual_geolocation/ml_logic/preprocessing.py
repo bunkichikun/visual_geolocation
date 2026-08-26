@@ -31,7 +31,6 @@ def build_labeled_dataframe(df, IMG_FOLDER, coord_to_geocell):
     Args:
         df: source dataframe with at least 'id', 'latitude', 'longitude' columns
         IMG_FOLDER: path to the local zip file
-        prefix: folder name inside the zip matching the zip file
         coord_to_geocell: function that maps (lon, lat) to a geocell id
 
     Returns:
@@ -70,19 +69,20 @@ def load_image_and_label(img_id, label, IMG_FOLDER, prefix, img_size):
     img_array = tf.image.resize(img_array, img_size)
     return img_array, label
 
-def make_tf_dataset(df, IMG_FOLDER, prefix, img_size=(64, 64), batch_size=16):
+def make_tf_dataset(df, IMG_FOLDER, img_size=(64, 64), batch_size=16):
     """Build a tf.data.Dataset that loads images on the fly from a local zip archive.
 
     Args:
         df: dataframe with 'id' and 'geocell' columns (output of build_labeled_dataframe)
         IMG_FOLDER: path to the local zip file
-        prefix: folder name inside the zip
         img_size: target (height, width) for resizing every image
         batch_size: number of samples per batch
 
     Returns:
         A batched tf.data.Dataset yielding (image, label) pairs.
     """
+    prefix = IMG_FOLDER.replace(".zip", "")
+
     ids = df['id'].tolist()
     labels = df['geocell'].tolist()
 

@@ -8,19 +8,36 @@ import math
 
 from visual_geolocation.ml_logic.registry import *
 
-from visual_geolocation.ml_logic.preprocessing import preprocess_features
+from visual_geolocation.ml_logic.preprocessing import build_labeled_dataframe, make_tf_dataset
+from visual_geolocation.ml_logic.model import initialize_model, compile_model, train_model
 #from visual_geolocation.interface.workflow import
 from visual_geolocation.utils import haversine, geoscore, coord_to_geocell, geocell_to_country
+from visual_geolocation.params import IMG_FOLDER, CLASS_NUMBER, BATCH_SIZE, BUCKET_NAME
 
 
 
-def preprocess ():
-  pass
+def preprocess():
+    train_df = pd.read_csv("raw_data/final_train.csv")
+    df_subset = build_labeled_dataframe(train_df, IMG_FOLDER, coord_to_geocell)
+    return df_subset
 
 
 
-def train ():
-  pass
+def train():
+    df_subset = preprocess()
+
+    dataset = make_tf_dataset(
+        df_subset,
+        IMG_FOLDER,
+        img_size=(64, 64),
+        batch_size=BATCH_SIZE
+    )
+
+    model = initialize_model(input_shape=(64, 64, 3))
+    model = compile_model(model)
+    model, history = train_model(model, dataset, epochs=2)
+
+    return model, history
 
 
 
@@ -116,4 +133,11 @@ def evaluate_most_frequent(test_df):
 
 if __name__ == '__main__':
 
+    client = storage.Client()
+    bucket = client.bucket(BUCKET_NAME)
+
+    blob = bucket.blob("train/00.zip")
+    blob.download_to_filename("00.zip")
+
+    model, history = train()
     print("test fonction main")
