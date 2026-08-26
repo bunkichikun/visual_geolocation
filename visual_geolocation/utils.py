@@ -5,7 +5,7 @@ import numpy as np
 
 from shapely.geometry import Point
 
-from params import GEOCELL_SIZE, LON_MIN, LON_MAX, LAT_MIN, LAT_MAX
+from visual_geolocation.params import GEOCELL_SIZE, LON_MIN, LON_MAX, LAT_MIN, LAT_MAX
 
 EARTH_RADIUS = 6371
 GEOSCORE_MODULE = 5000
