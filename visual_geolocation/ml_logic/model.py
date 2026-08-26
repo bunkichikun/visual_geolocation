@@ -3,6 +3,8 @@ from tensorflow import keras
 from keras import Model, Sequential, layers, regularizers, optimizers
 from keras.callbacks import EarlyStopping
 from typing import Tuple
+from colorama import Fore, Style
+from visual_geolocation.params import BATCH_SIZE, CLASS_NUMBER
 
 """
 All the works around the predicion model
@@ -12,7 +14,9 @@ All the works around the predicion model
 
 def initialize_model(input_shape: tuple) -> Model:
 
-    model.add(Input(shape=SIZE_OF_THE_PICTURE)))
+    model = Sequential()
+
+    model.add(layers.Input(shape=input_shape))
     model.add(layers.Conv2D(8, (4, 4), activation="relu",padding='same'))
 
     model.add(layers.MaxPool2D(pool_size=(2, 2)))
@@ -25,12 +29,11 @@ def initialize_model(input_shape: tuple) -> Model:
     ### Last layer - Classification Layer with NUMBER_OF_GOOD_GEOCEL outputs corresponding to NUMBER_OF_GOOD_GEOCEL digits
     model.add(layers.Dense(CLASS_NUMBER,activation='softmax'))
 
-
     return model
 
 
 def compile_model(model : Model) -> Model:
-    model.compile(loss='categorical_crossentropy',
+    model.compile(loss='sparse_categorical_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 
@@ -39,8 +42,7 @@ def compile_model(model : Model) -> Model:
 
 def train_model(
         model: Model,
-        X: np.ndarray,
-        y: np.ndarray,
+        dataset,
         batch_size=BATCH_SIZE,
         patience=2,
         validation_data=None, # overrides validation_split
@@ -59,16 +61,15 @@ def train_model(
     )
 
     history = model.fit(
-        X,
-        y,
+        dataset,
         validation_data=validation_data,
         validation_split=validation_split,
         epochs=100,
         batch_size=batch_size,
         callbacks=[es],
-        verbose=0
+        verbose=1
     )
 
-    print(f"✅ Model trained on {len(X)} rows with min val MAE: {round(np.min(history.history['val_mae']), 2)}")
+    print(f"✅ Model trained with max accuracy: {round(np.min(history.history['val_accuracy']), 2)}")
 
     return model, history
