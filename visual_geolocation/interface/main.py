@@ -7,7 +7,7 @@ import math
 
 from visual_geolocation.ml_logic.preprocessing import preprocess_features
 #from visual_geolocation.interface.workflow import
-from visual_geolocation.utils import haversine, geoscore
+from visual_geolocation.utils import haversine, geoscore, coord_to_geocell, geocell_to_country
 
 
 
@@ -78,7 +78,15 @@ def evaluate_random(test_df):
 
     s_geoscore = geoscore(d_haversine)
 
-    accuracy = np.nan # TODO Later, when test.csv is available
+    # TODO Later, when test_final.csv is available
+    # return 1 if the predicted country is right, 0 else
+
+    pred_country = geocell_to_country(coord_to_geocell(pred_lon, pred_lat))
+    target_country = test_df.loc[t_i, "unique_country"]
+
+    #TODO
+    # accuracy = target_country == pred_country but check that the country codes are the same...
+    accuracy = np.nan
 
     return s_geoscore, d_haversine, accuracy
 
