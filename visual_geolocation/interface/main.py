@@ -5,7 +5,7 @@ import geopandas as gpd
 import os
 import math
 
-from visual_geolocation.ml_logic.model import *
+from visual_geolocation.interface.main import *
 from visual_geolocation.ml_logic.preprocessing import *
 from visual_geolocation.interface.workflow import *
 
@@ -28,3 +28,8 @@ def evaluate ():
 
 def predict (X_pred : pd.DataFrame = None) -> np.ndarray:
   pass
+
+
+if __name__ == '__main__':
+
+    print("test fonction main")
