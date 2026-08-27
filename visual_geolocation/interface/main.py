@@ -11,11 +11,26 @@ from visual_geolocation.ml_logic.registry import *
 from visual_geolocation.ml_logic.preprocessing import preprocess_features
 #from visual_geolocation.interface.workflow import
 from visual_geolocation.utils import haversine, geoscore, coord_to_geocell, geocell_to_country
+from visual_geolocation.ml_logic.data import get_data_with_cache
 
 
 
-def preprocess ():
-  pass
+def preprocess():
+
+    train_cache_path = Path(RAW_DATA_PATH).joinpath(TRAIN_FILE)
+    test_cache_path = Path(RAW_DATA_PATH).joinpath(TEST_FILE)
+
+    df_train = get_data_with_cache(
+        bucket_name=BUCKET_NAME,
+        source_blob_name=TRAIN_FILE,
+        cache_path=train_cache_path,
+    )
+
+    df_test = get_data_with_cache(
+        bucket_name=BUCKET_NAME,
+        source_blob_name=TEST_FILE,
+        cache_path=test_cache_path,
+    )
 
 
 
@@ -86,6 +101,8 @@ def evaluate_random(test_df):
 
     pred_country = geocell_to_country(coord_to_geocell(pred_lon, pred_lat))
     target_country = test_df.loc[t_i, "unique_country"]
+
+    print(f'the traget is : {target_country}, and the prediction is : {pred_country}')
 
     #TODO
     # accuracy = target_country == pred_country but check that the country codes are the same...

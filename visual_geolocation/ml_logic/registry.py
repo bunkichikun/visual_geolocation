@@ -7,7 +7,7 @@ from colorama import Fore, Style
 from tensorflow import keras
 from google.cloud import storage
 
-from taxifare.params import *
+#from visual_geolocation
 
 
 def save_results(params: dict, metrics: dict) -> None:

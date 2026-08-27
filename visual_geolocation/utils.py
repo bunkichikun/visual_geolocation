@@ -43,37 +43,62 @@ def geocell_to_coord(geocell_idx, geocell_size = GEOCELL_SIZE):
     return lon, lat
 
 
-def geocell_to_country(geocell_idx):
-    """Given a Geocell index (the class identifier in our classification)
-    returns a tuple with the (country name, 3-letter-code) for the country
-    where centroid of the geocell lies.
+# def geocell_to_country(geocell_idx):
+#     """Given a Geocell index (the class identifier in our classification)
+#     returns a tuple with the (country name, 3-letter-code) for the country
+#     where centroid of the geocell lies.
 
-    return example ('France', 'FR1')
-    """
+#     return example ('France', 'FR1')
+#     """
+#     lon, lat = geocell_to_coord(geocell_idx)
+
+#     # geojson with countries from https://geojson-maps.kyd.au/
+#     countries_df = gpd.read_file("../images/custom.geo_lite.json")
+
+#     # Create GeoDataFrame for the point
+#     point_gdf = gpd.GeoDataFrame(
+#         geometry=[Point(lon, lat)],
+#         crs="EPSG:4326"
+#     )
+
+#     # Ensure CRS consistency
+#     countries_df = countries_df.to_crs(point_gdf.crs)
+
+#     # Spatial join
+#     result = gpd.sjoin(point_gdf, countries_df, predicate="within")
+
+#     return result["sovereignt"].iloc[0], result["sov_a3"].iloc[0]
+
+
+
+def geocell_to_country(geocell_idx):
     lon, lat = geocell_to_coord(geocell_idx)
 
-    # geojson with countries from https://geojson-maps.kyd.au/
     countries_df = gpd.read_file("../images/custom.geo_lite.json")
 
-    # Create GeoDataFrame for the point
     point_gdf = gpd.GeoDataFrame(
         geometry=[Point(lon, lat)],
         crs="EPSG:4326"
     )
 
-    # Ensure CRS consistency
     countries_df = countries_df.to_crs(point_gdf.crs)
 
-    # Spatial join
     result = gpd.sjoin(point_gdf, countries_df, predicate="within")
+
+    if result.empty:
+        return None, None  # ou une valeur par défaut style ("Ocean", "N/A")
 
     return result["sovereignt"].iloc[0], result["sov_a3"].iloc[0]
 
 
+
 def class_to_geocell():#class_idx):
     """Returns the geocell index corresponding to the class index"""
-    ## TODO compute geocell idx from class index for example by reusing a dict
+    ## TODO compute geocell idx from cl&ass index for example by reusing a dict
     # initiated when building
+
+
+
     pass
 
 
