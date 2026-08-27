@@ -8,8 +8,8 @@ import numpy as np
 
 from shapely.geometry import Point
 
-from visual_geolocation.params import GEOCELL_SIZE, LON_MIN, LON_MAX, LAT_MIN, LAT_MAX, RAW_DATA_PATH,\
-    CLASS_TO_GEOCELL_MAP, IMAGES_PATH, BOUNDARIES_JSON
+from visual_geolocation.params import GEOCELL_SIZE, LON_MIN, LON_MAX, LAT_MIN, \
+    LAT_MAX, RAW_DATA_PATH, CLASS_TO_GEOCELL_MAP, IMAGES_PATH, BOUNDARIES_JSON
 
 EARTH_RADIUS = 6371
 GEOSCORE_MODULE = 5000
@@ -81,21 +81,23 @@ def geocell_to_country(geocell_idx):
 
 
 def class_to_geocell(class_idx):
-    """Returns the geocell index corresponding to the class index. This is loaded from a pickle file"""
+    """Returns the geocell index corresponding to the class index. This is
+    loaded from a pickle file"""
     assert 0<= class_idx <= len(CLASS_TO_GEOCELL)
     return CLASS_TO_GEOCELL[class_idx]
 
 
 def geocell_to_class(geocell_idx):
-    """Returns the Class index corresponding to the Geocell index. This is loaded from a pickle file"""
+    """Returns the Class index corresponding to the Geocell index. This is
+    loaded from a pickle file"""
     assert geocell_idx in CLASS_TO_GEOCELL
     return CLASS_TO_GEOCELL.index(geocell_idx)
 
 
 
 def haversine(lon_1, lat_1, lon_2, lat_2):
-    """Computes the distance between two points (described by their latitude and longitude)
-    at the surface of the earth"""
+    """Computes the distance between two points (described by their latitude
+    and longitude) at the surface of the earth"""
     lat_1_rad, lon_1_rad = np.radians(lat_1), np.radians(lon_1)
     lat_2_rad, lon_2_rad = np.radians(lat_2), np.radians(lon_2)
 

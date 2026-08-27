@@ -1,14 +1,12 @@
+"""
+All the works around the predicion model
+"""
 import numpy as np
-from tensorflow import keras
-from keras import Model, Sequential, layers, regularizers, optimizers
-from keras.callbacks import EarlyStopping
+from keras import Model, Sequential, layers
 from typing import Tuple
 from colorama import Fore, Style
 from visual_geolocation.params import BATCH_SIZE, CLASS_NUMBER
 
-"""
-All the works around the predicion model
-"""
 
 
 

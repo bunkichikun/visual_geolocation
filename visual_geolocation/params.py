@@ -10,6 +10,8 @@ LON_MAX = int(os.environ.get("LON_MAX"))
 LAT_MIN = int(os.environ.get("LAT_MIN"))
 LAT_MAX = int(os.environ.get("LAT_MAX"))
 
+MODEL_TARGET = os.environ.get("MODEL_TARGET")
+
 
 
 ## PATHS
@@ -22,6 +24,8 @@ TEST_FILE = os.environ.get("TEST_FILE")
 IMAGES_PATH = os.environ.get("IMAGES_PATH")
 BOUNDARIES_JSON = os.environ.get("BOUNDARIES_JSON")
 IMG_FOLDER = os.environ.get("IMG_FOLDER")
+LOCAL_REGISTRY_PATH = os.environ.get("LOCAL_REGISTRY_PATH")
+
 
 ## TRAINING
 CLASS_NUMBER = int(os.environ.get("CLASS_NUMBER"))
