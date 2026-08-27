@@ -35,16 +35,18 @@ def load_data_from_bucket():
     )
     return df_train, df_test
 
-    
+
 def preprocess(train_df):
     df_subset = build_labeled_dataframe(train_df, IMG_FOLDER, coord_to_geocell)
     return df_subset
 
 
 
-
 def train():
-    df_subset = preprocess()
+
+    train_df, test_df = load_data_from_bucket()
+
+    df_subset = preprocess(train_df)
 
     dataset = make_tf_dataset(
         df_subset,
