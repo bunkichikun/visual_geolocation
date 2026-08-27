@@ -8,15 +8,17 @@ import math
 
 from visual_geolocation.ml_logic.registry import *
 
-from visual_geolocation.ml_logic.preprocessing import preprocess_features
+from visual_geolocation.ml_logic.preprocessing import build_labeled_dataframe, make_tf_dataset
+from visual_geolocation.ml_logic.model import initialize_model, compile_model, train_model
 #from visual_geolocation.interface.workflow import
 from visual_geolocation.utils import haversine, geoscore, coord_to_geocell, geocell_to_country
 from visual_geolocation.ml_logic.data import get_data_with_cache
+from visual_geolocation.params import IMG_FOLDER, CLASS_NUMBER, BATCH_SIZE, BUCKET_NAME
 
 
 
-def preprocess():
 
+def load_data_from_bucket():
     train_cache_path = Path(RAW_DATA_PATH).joinpath(TRAIN_FILE)
     test_cache_path = Path(RAW_DATA_PATH).joinpath(TEST_FILE)
 
@@ -31,11 +33,31 @@ def preprocess():
         source_blob_name=TEST_FILE,
         cache_path=test_cache_path,
     )
+    return df_train, df_test
+
+    
+def preprocess(train_df):
+    df_subset = build_labeled_dataframe(train_df, IMG_FOLDER, coord_to_geocell)
+    return df_subset
 
 
 
-def train ():
-  pass
+
+def train():
+    df_subset = preprocess()
+
+    dataset = make_tf_dataset(
+        df_subset,
+        IMG_FOLDER,
+        img_size=(64, 64),
+        batch_size=BATCH_SIZE
+    )
+
+    model = initialize_model(input_shape=(64, 64, 3))
+    model = compile_model(model)
+    model, history = train_model(model, dataset, epochs=2)
+
+    return model, history
 
 
 
@@ -99,8 +121,10 @@ def evaluate_random(test_df):
     # TODO Later, when test_final.csv is available
     # return 1 if the predicted country is right, 0 else
 
-    pred_country = geocell_to_country(coord_to_geocell(pred_lon, pred_lat))
-    target_country = test_df.loc[t_i, "unique_country"]
+    #pred_country = geocell_to_country(coord_to_geocell(pred_lon, pred_lat))
+    #target_country = test_df.loc[t_i, "unique_country"]
+
+    #class_to_geocell(0)
 
     print(f'the traget is : {target_country}, and the prediction is : {pred_country}')
 
@@ -133,4 +157,11 @@ def evaluate_most_frequent(test_df):
 
 if __name__ == '__main__':
 
+    client = storage.Client()
+    bucket = client.bucket(BUCKET_NAME)
+
+    blob = bucket.blob("train/00.zip")
+    blob.download_to_filename("00.zip")
+
+    model, history = train()
     print("test fonction main")
