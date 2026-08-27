@@ -90,6 +90,6 @@ def load_data_from_bucket(BUCKET_NAME, RAW_DATA_PATH, CLASS_TO_GEOCELL_MAP, BOUN
 def dump_preprocessed_image(id, img_array, label):
     client = storage.Client()
     bucket = client.bucket(BUCKET_NAME)
-    blob = bucket.blob(f"preprocessed/train/{IMG_FOLDER.split('.')[0]}/{str(label).split('.')[0]}/{id}_pp.jpg")
+    blob = bucket.blob(f"preprocessed/train/00/{str(label).split('.')[0]}/{id}_pp.jpg")
     blob.upload_from_string(array_to_img(img_array).tobytes(), content_type="image/jpeg")
     print(f"dumped into preprocessed/train/{IMG_FOLDER.split('.')[0]}/{str(label).split('.')[0]}/{id}_pp.jpg !!!")
