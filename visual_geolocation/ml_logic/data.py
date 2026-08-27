@@ -2,6 +2,8 @@ import pandas as pd
 from visual_geolocation.params import GCP_PROJECT, BUCKET_NAME
 from pathlib import Path
 from google.cloud import storage
+from colorama import Fore, Style
+
 
 
 def get_data_with_cache(bucket_name, source_blob_name, cache_path):
