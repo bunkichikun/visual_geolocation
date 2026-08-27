@@ -6,12 +6,22 @@ import os
 
 
 ######## VARIABLES ##########
-GEOCELL_SIZE = os.environ.get("GEOCELL_SIZE")
-LON_MIN = os.environ.get("LON_MIN")
-LON_MAX = os.environ.get("LON_MAX")
-LAT_MIN = os.environ.get("LAT_MIN")
-LAT_MAX = os.environ.get("LAT_MAX")
+GEOCELL_SIZE = int(os.environ.get("GEOCELL_SIZE"))
+LON_MIN = int(os.environ.get("LON_MIN"))
+LON_MAX = int(os.environ.get("LON_MAX"))
+LAT_MIN = int(os.environ.get("LAT_MIN"))
+LAT_MAX = int(os.environ.get("LAT_MAX"))
 
+
+## PATHS
+RAW_DATA_PATH = os.environ.get("RAW_DATA_PATH")
+CLASS_TO_GEOCELL_MAP = os.environ.get("CLASS_TO_GEOCELL_MAP")
+TRAIN_FILE = os.environ.get("TRAIN_FILE")
+TEST_FILE = os.environ.get("TEST_FILE")
+IMAGES_PATH = os.environ.get("IMAGES_PATH")
+BOUNDARIES_JSON = os.environ.get("BOUNDARIES_JSON")
+IMG_FOLDER = os.environ.get("IMG_FOLDER")
+
+## TRAINING
 CLASS_NUMBER = os.environ.get("CLASS_NUMBER")
 BATCH_SIZE = os.environ.get("BATCH_SIZE")
-IMG_FOLDER = os.environ.get("IMG_FOLDER")
