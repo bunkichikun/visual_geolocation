@@ -51,18 +51,27 @@ def geocell_to_coord(geocell_idx, geocell_size = GEOCELL_SIZE):
 
 
 def geocell_to_country(geocell_idx):
+    """Given a Geocell index (the class identifier in our classification)
+    returns a tuple with the (country name, 3-letter-code) for the country
+    where centroid of the geocell lies.
+
+    return example ('France', 'FR1')
+    """
     lon, lat = geocell_to_coord(geocell_idx)
 
     # geojson with countries from https://geojson-maps.kyd.au/
     countries_df = gpd.read_file(os.path.join(IMAGES_PATH, BOUNDARIES_JSON))
 
+    # Create GeoDataFrame for the point
     point_gdf = gpd.GeoDataFrame(
         geometry=[Point(lon, lat)],
         crs="EPSG:4326"
     )
 
+    # Ensure CRS consistency
     countries_df = countries_df.to_crs(point_gdf.crs)
 
+    # Spatial join
     result = gpd.sjoin(point_gdf, countries_df, predicate="within")
 
     if result.empty:
@@ -73,7 +82,15 @@ def geocell_to_country(geocell_idx):
 
 def class_to_geocell(class_idx):
     """Returns the geocell index corresponding to the class index. This is loaded from a pickle file"""
+    assert 0<= class_idx <= len(CLASS_TO_GEOCELL)
     return CLASS_TO_GEOCELL[class_idx]
+
+
+def geocell_to_class(geocell_idx):
+    """Returns the Class index corresponding to the Geocell index. This is loaded from a pickle file"""
+    assert geocell_idx in CLASS_TO_GEOCELL
+    return CLASS_TO_GEOCELL.index(geocell_idx)
+
 
 
 def haversine(lon_1, lat_1, lon_2, lat_2):

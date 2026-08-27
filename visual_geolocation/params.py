@@ -10,7 +10,10 @@ LON_MAX = int(os.environ.get("LON_MAX"))
 LAT_MIN = int(os.environ.get("LAT_MIN"))
 LAT_MAX = int(os.environ.get("LAT_MAX"))
 
+
+
 ## PATHS
+GCP_PROJECT = os.environ.get("GCP_PROJECT")
 BUCKET_NAME = os.environ.get("BUCKET_NAME")
 RAW_DATA_PATH = os.environ.get("RAW_DATA_PATH")
 CLASS_TO_GEOCELL_MAP = os.environ.get("CLASS_TO_GEOCELL_MAP")
