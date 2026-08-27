@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import geopandas as gpd
 import os
 import math
+from pathlib import Path
+
 
 
 from visual_geolocation.ml_logic.registry import *
@@ -13,7 +15,7 @@ from visual_geolocation.ml_logic.model import initialize_model, compile_model, t
 #from visual_geolocation.interface.workflow import
 from visual_geolocation.utils import haversine, geoscore, coord_to_geocell, geocell_to_country, geocell_to_class
 from visual_geolocation.ml_logic.data import get_data_with_cache
-from visual_geolocation.params import IMG_FOLDER, CLASS_NUMBER, BATCH_SIZE, BUCKET_NAME
+from visual_geolocation.params import IMG_FOLDER, CLASS_NUMBER, BATCH_SIZE, BUCKET_NAME, RAW_DATA_PATH, TRAIN_FILE, TEST_FILE
 
 
 
@@ -42,7 +44,10 @@ def preprocess(train_df):
 
 
 def train():
-    df_subset = preprocess()
+
+    train_df, test_df = load_data_from_bucket()
+
+    df_subset = preprocess(train_df)
 
     dataset = make_tf_dataset(
         df_subset,
@@ -53,7 +58,7 @@ def train():
 
     model = initialize_model(input_shape=(64, 64, 3))
     model = compile_model(model)
-    model, history = train_model(model, dataset, epochs=2)
+    model, history = train_model(model, dataset)
 
     return model, history
 
