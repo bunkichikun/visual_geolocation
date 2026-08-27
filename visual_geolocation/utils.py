@@ -6,14 +6,27 @@ import os
 import geopandas as gpd
 import numpy as np
 
+from pathlib import Path
+
 from shapely.geometry import Point
 
 from visual_geolocation.params import GEOCELL_SIZE, LON_MIN, LON_MAX, LAT_MIN, LAT_MAX, RAW_DATA_PATH,\
-    CLASS_TO_GEOCELL_MAP, IMAGES_PATH, BOUNDARIES_JSON
+    CLASS_TO_GEOCELL_MAP, IMAGES_PATH, BOUNDARIES_JSON, BUCKET_NAME
+from visual_geolocation.ml_logic.data import get_pickle , get_json, load_data_from_bucket
+
+
 
 EARTH_RADIUS = 6371
 GEOSCORE_MODULE = 5000
 GEOSCORE_FACTOR = 1492.7
+
+
+
+
+
+
+load_data_from_bucket(BUCKET_NAME, RAW_DATA_PATH, CLASS_TO_GEOCELL_MAP, BOUNDARIES_JSON)
+
 
 with open(os.path.join(RAW_DATA_PATH, CLASS_TO_GEOCELL_MAP), 'rb') as handle:
     CLASS_TO_GEOCELL = pickle.load(handle)

@@ -31,3 +31,56 @@ def get_data_with_cache(bucket_name, source_blob_name, cache_path):
     print(f"✅ Data loaded, with shape {df.shape}")
 
     return df
+
+
+def get_json(bucket_name, source_json_name, cache_path):
+
+    if cache_path.is_file():
+        print(Fore.BLUE + "\nLoad JSON from local file..." + Style.RESET_ALL)
+    else:
+        print(Fore.BLUE + "\nLoad JSON from GCS bucket..." + Style.RESET_ALL)
+
+        cache_path.parent.mkdir(parents=True, exist_ok=True)
+
+        client = storage.Client()
+        bucket = client.bucket(bucket_name)
+        blob = bucket.blob(source_json_name)
+        blob.download_to_filename(cache_path)
+
+    print(f"✅ JSON ready at {cache_path}")
+
+
+
+def get_pickle(bucket_name, source_json_name, cache_path):
+
+    if cache_path.is_file():
+        print(Fore.BLUE + "\nLoad pickle from local file..." + Style.RESET_ALL)
+    else:
+        print(Fore.BLUE + "\nLoad pickle from GCS bucket..." + Style.RESET_ALL)
+
+        cache_path.parent.mkdir(parents=True, exist_ok=True)
+
+        client = storage.Client()
+        bucket = client.bucket(bucket_name)
+        blob = bucket.blob(source_json_name)
+        blob.download_to_filename(cache_path)
+
+    print(f"✅ pickle ready at {cache_path}")
+
+
+def load_data_from_bucket(BUCKET_NAME, RAW_DATA_PATH, CLASS_TO_GEOCELL_MAP, BOUNDARIES_JSON):
+
+    pickle_path = Path(RAW_DATA_PATH).joinpath(CLASS_TO_GEOCELL_MAP)
+    boundaries_json_path = Path(RAW_DATA_PATH).joinpath(BOUNDARIES_JSON)
+
+    get_json(
+        bucket_name=BUCKET_NAME,
+        source_json_name=f"{RAW_DATA_PATH}/{BOUNDARIES_JSON}",
+        cache_path=boundaries_json_path
+    )
+
+    get_pickle(
+        bucket_name=BUCKET_NAME,
+        source_json_name=f"{RAW_DATA_PATH}/{CLASS_TO_GEOCELL_MAP}",
+        cache_path=pickle_path
+    )

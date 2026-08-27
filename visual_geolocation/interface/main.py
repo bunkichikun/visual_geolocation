@@ -14,8 +14,11 @@ from visual_geolocation.ml_logic.preprocessing import build_labeled_dataframe, m
 from visual_geolocation.ml_logic.model import initialize_model, compile_model, train_model
 #from visual_geolocation.interface.workflow import
 from visual_geolocation.utils import haversine, geoscore, coord_to_geocell, geocell_to_country
-from visual_geolocation.ml_logic.data import get_data_with_cache
+from visual_geolocation.ml_logic.data import get_data_with_cache , get_json, get_pickle
 from visual_geolocation.params import IMG_FOLDER, CLASS_NUMBER, BATCH_SIZE, BUCKET_NAME, RAW_DATA_PATH, TRAIN_FILE, TEST_FILE
+
+
+
 
 
 
