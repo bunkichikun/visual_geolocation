@@ -1,12 +1,11 @@
 import io
 import zipfile
 
-import numpy as np
-import pandas as pd
 import tensorflow as tf
 from PIL import Image
 from visual_geolocation.utils import geocell_to_class, coord_to_geocell
-#from keras.ops import expand_dims
+
+
 
 
 def load_image_from_zip(IMG_FOLDER, prefix, img_id):
@@ -24,6 +23,7 @@ def load_image_from_zip(IMG_FOLDER, prefix, img_id):
         with z.open(f"{prefix}/{img_id}.jpg") as f:
             img_bytes = f.read()
     return Image.open(io.BytesIO(img_bytes))
+
 
 def build_labeled_dataframe(df, IMG_FOLDER):
     """Filter a dataframe to keep only rows whose image is present in the given zip,
@@ -51,6 +51,7 @@ def build_labeled_dataframe(df, IMG_FOLDER):
     subset['class'] = subset['geocell'].apply(geocell_to_class)
     return subset
 
+
 def load_image_and_label(img_id, label, IMG_FOLDER, prefix, img_size):
     """Python-level loader called through tf.py_function.
     Converts a tensor image id into a resized numpy image array paired with its label.
@@ -71,6 +72,7 @@ def load_image_and_label(img_id, label, IMG_FOLDER, prefix, img_size):
     img_array = tf.image.resize(img_array, img_size)
     return img_array, label
 
+
 def make_tf_dataset(df, IMG_FOLDER, img_size=(64, 64), batch_size=16):
     """Build a tf.data.Dataset that loads images on the fly from a local zip archive.
 
@@ -87,6 +89,7 @@ def make_tf_dataset(df, IMG_FOLDER, img_size=(64, 64), batch_size=16):
 
     ids = df['id'].tolist()
     labels = df['class'].tolist()
+
 
     def wrapper_tf(img_id, label):
         """TensorFlow-graph-compatible wrapper around load_image_and_label.
@@ -110,9 +113,11 @@ def make_tf_dataset(df, IMG_FOLDER, img_size=(64, 64), batch_size=16):
         return img, label
 
     dataset = tf.data.Dataset.from_tensor_slices((ids, labels))
-    dataset = dataset.map(wrapper_tf)
     dataset = dataset.batch(batch_size)
+    dataset = dataset.map(wrapper_tf)
+    dataset = dataset.prefetch(tf.data.AUTOTUNE)
     return dataset
+
 
 def preprocess_features():
 

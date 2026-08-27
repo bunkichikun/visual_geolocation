@@ -1,13 +1,7 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import geopandas as gpd
-import os
-import math
 from pathlib import Path
 from google.cloud import storage
-
-
 
 from visual_geolocation.ml_logic.registry import *
 
@@ -16,7 +10,7 @@ from visual_geolocation.ml_logic.model import initialize_model, compile_model, t
 #from visual_geolocation.interface.workflow import
 from visual_geolocation.utils import haversine, geoscore
 from visual_geolocation.ml_logic.data import get_data_with_cache
-from visual_geolocation.params import IMG_FOLDER, CLASS_NUMBER, BATCH_SIZE, BUCKET_NAME, RAW_DATA_PATH, TRAIN_FILE, TEST_FILE
+from visual_geolocation.params import IMG_FOLDER, BATCH_SIZE, BUCKET_NAME, RAW_DATA_PATH, TRAIN_FILE, TEST_FILE
 
 
 
