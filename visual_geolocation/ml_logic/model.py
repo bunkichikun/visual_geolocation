@@ -2,7 +2,7 @@
 All the works around the predicion model
 """
 import numpy as np
-from keras import Model, Sequential, layers
+from keras import Model, Sequential, layers, losses
 from typing import Tuple
 from colorama import Fore, Style
 from visual_geolocation.params import BATCH_SIZE, CLASS_NUMBER
@@ -31,7 +31,7 @@ def initialize_model(input_shape: tuple) -> Model:
 
 
 def compile_model(model : Model) -> Model:
-    loss = keras.losses.SparseCategoricalCrossentropy(ignore_class=-1)
+    loss = losses.SparseCategoricalCrossentropy(ignore_class=-1)
 
     model.compile(loss=loss,
               optimizer='adam',
