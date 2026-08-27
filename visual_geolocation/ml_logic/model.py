@@ -43,30 +43,17 @@ def compile_model(model : Model) -> Model:
 def train_model(
         model: Model,
         dataset,
-        batch_size=BATCH_SIZE,
-        patience=2,
-        validation_data=None, # overrides validation_split
-        validation_split=0.3
+        batch_size=BATCH_SIZE
     ) -> Tuple[Model, dict]:
     """
     Fit the model and return a tuple (fitted_model, history)
     """
     print(Fore.BLUE + "\nTraining model..." + Style.RESET_ALL)
 
-    es = EarlyStopping(
-        #monitor="val_loss",
-        patience=patience,
-        restore_best_weights=True,
-        verbose=1
-    )
-
     history = model.fit(
         dataset,
-        validation_data=validation_data,
-        validation_split=validation_split,
         epochs=100,
         batch_size=batch_size,
-        callbacks=[es],
         verbose=1
     )
 
