@@ -1,14 +1,12 @@
+"""
+All the works around the predicion model
+"""
 import numpy as np
-from tensorflow import keras
-from keras import Model, Sequential, layers, regularizers, optimizers
-from keras.callbacks import EarlyStopping
+from keras import Model, Sequential, layers
 from typing import Tuple
 from colorama import Fore, Style
 from visual_geolocation.params import BATCH_SIZE, CLASS_NUMBER
 
-"""
-All the works around the predicion model
-"""
 
 
 
@@ -33,7 +31,9 @@ def initialize_model(input_shape: tuple) -> Model:
 
 
 def compile_model(model : Model) -> Model:
-    model.compile(loss='sparse_categorical_crossentropy',
+    loss = keras.losses.SparseCategoricalCrossentropy(ignore_class=-1)
+
+    model.compile(loss=loss,
               optimizer='adam',
               metrics=['accuracy'])
 
@@ -52,11 +52,11 @@ def train_model(
 
     history = model.fit(
         dataset,
-        epochs=100,
+        epochs=1,
         batch_size=batch_size,
         verbose=1
     )
 
-    print(f"✅ Model trained with max accuracy: {round(np.min(history.history['val_accuracy']), 2)}")
+    print(f"✅ Model trained with max accuracy: {round(np.max(history.history['accuracy']), 2)}")
 
     return model, history

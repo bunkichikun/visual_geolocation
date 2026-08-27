@@ -1,12 +1,7 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import geopandas as gpd
-import os
-import math
 from pathlib import Path
-
-
+from google.cloud import storage
 
 from visual_geolocation.ml_logic.registry import *
 
@@ -42,9 +37,8 @@ def load_data_from_bucket():
 
 
 def preprocess(train_df):
-    df_subset = build_labeled_dataframe(train_df, IMG_FOLDER, coord_to_geocell)
+    df_subset = build_labeled_dataframe(train_df, IMG_FOLDER)
     return df_subset
-
 
 
 def train():

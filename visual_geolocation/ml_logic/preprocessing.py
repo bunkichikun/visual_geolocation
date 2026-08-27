@@ -1,11 +1,11 @@
 import io
 import zipfile
 
-import numpy as np
-import pandas as pd
 import tensorflow as tf
 from PIL import Image
-#from keras.ops import expand_dims
+from visual_geolocation.utils import geocell_to_class, coord_to_geocell
+
+
 
 
 def load_image_from_zip(IMG_FOLDER, prefix, img_id):
@@ -24,7 +24,8 @@ def load_image_from_zip(IMG_FOLDER, prefix, img_id):
             img_bytes = f.read()
     return Image.open(io.BytesIO(img_bytes))
 
-def build_labeled_dataframe(df, IMG_FOLDER, coord_to_geocell):
+
+def build_labeled_dataframe(df, IMG_FOLDER):
     """Filter a dataframe to keep only rows whose image is present in the given zip,
     and compute the geocell label for each row from its coordinates.
 
@@ -47,7 +48,9 @@ def build_labeled_dataframe(df, IMG_FOLDER, coord_to_geocell):
         lambda row: coord_to_geocell(row['longitude'], row['latitude']),
         axis=1
     )
+    subset['class'] = subset['geocell'].apply(geocell_to_class)
     return subset
+
 
 def load_image_and_label(img_id, label, IMG_FOLDER, prefix, img_size):
     """Python-level loader called through tf.py_function.
@@ -69,6 +72,7 @@ def load_image_and_label(img_id, label, IMG_FOLDER, prefix, img_size):
     img_array = tf.image.resize(img_array, img_size)
     return img_array, label
 
+
 def make_tf_dataset(df, IMG_FOLDER, img_size=(64, 64), batch_size=16):
     """Build a tf.data.Dataset that loads images on the fly from a local zip archive.
 
@@ -84,7 +88,8 @@ def make_tf_dataset(df, IMG_FOLDER, img_size=(64, 64), batch_size=16):
     prefix = IMG_FOLDER.replace(".zip", "")
 
     ids = df['id'].tolist()
-    labels = df['geocell'].tolist()
+    labels = df['class'].tolist()
+
 
     def wrapper_tf(img_id, label):
         """TensorFlow-graph-compatible wrapper around load_image_and_label.
@@ -108,9 +113,11 @@ def make_tf_dataset(df, IMG_FOLDER, img_size=(64, 64), batch_size=16):
         return img, label
 
     dataset = tf.data.Dataset.from_tensor_slices((ids, labels))
-    dataset = dataset.map(wrapper_tf)
     dataset = dataset.batch(batch_size)
+    dataset = dataset.map(wrapper_tf)
+    dataset = dataset.prefetch(tf.data.AUTOTUNE)
     return dataset
+
 
 def preprocess_features():
 

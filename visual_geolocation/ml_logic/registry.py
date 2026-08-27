@@ -3,11 +3,10 @@ import os
 import time
 import pickle
 
+from visual_geolocation.params import LOCAL_REGISTRY_PATH, BUCKET_NAME, MODEL_TARGET
 from colorama import Fore, Style
 from tensorflow import keras
 from google.cloud import storage
-
-#from visual_geolocation
 
 
 def save_results(params: dict, metrics: dict) -> None:
