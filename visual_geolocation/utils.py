@@ -88,7 +88,8 @@ def class_to_geocell(class_idx):
 
 def geocell_to_class(geocell_idx):
     """Returns the Class index corresponding to the Geocell index. This is loaded from a pickle file"""
-    assert geocell_idx in CLASS_TO_GEOCELL
+    if geocell_idx not in CLASS_TO_GEOCELL:
+        return -1.
     return CLASS_TO_GEOCELL.index(geocell_idx)
 
 
