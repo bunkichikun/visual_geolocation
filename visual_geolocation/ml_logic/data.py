@@ -1,8 +1,9 @@
 import pandas as pd
-from visual_geolocation.params import GCP_PROJECT, BUCKET_NAME
+from visual_geolocation.params import GCP_PROJECT, BUCKET_NAME, IMG_FOLDER
 from pathlib import Path
 from google.cloud import storage
 from colorama import Fore, Style
+from keras.utils.image_utils import  array_to_img
 
 
 
@@ -84,3 +85,11 @@ def load_data_from_bucket(BUCKET_NAME, RAW_DATA_PATH, CLASS_TO_GEOCELL_MAP, BOUN
         source_json_name=f"{RAW_DATA_PATH}/{CLASS_TO_GEOCELL_MAP}",
         cache_path=pickle_path
     )
+
+
+def dump_preprocessed_image(id, img_array, label):
+    client = storage.Client()
+    bucket = client.bucket(BUCKET_NAME)
+    blob = bucket.blob(f"preprocessed/train/{IMG_FOLDER.split('.')[0]}/{str(label).split('.')[0]}/{id}_pp.jpg")
+    blob.upload_from_string(array_to_img(img_array).tobytes(), content_type="image/jpeg")
+    print(f"dumped into preprocessed/train/{IMG_FOLDER.split('.')[0]}/{str(label).split('.')[0]}/{id}_pp.jpg !!!")

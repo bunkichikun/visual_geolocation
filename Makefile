@@ -3,6 +3,9 @@ default: pylint
 load_data_from_bucket:
 	python -c 'from visual_geolocation.ml_logic.utils import load_data_from_bucket; load_data_from_bucket() '
 
+preprocess:
+	python -c 'from visual_geolocation.interface.main import preprocess_offline; preprocess_offline() '
+
 run_main:
 	python -m visual_geolocation.interface.main
 

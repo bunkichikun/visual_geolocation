@@ -5,7 +5,7 @@ from google.cloud import storage
 
 from visual_geolocation.ml_logic.registry import *
 
-from visual_geolocation.ml_logic.preprocessing import build_labeled_dataframe, make_tf_dataset
+from visual_geolocation.ml_logic.preprocessing import build_labeled_dataframe, make_tf_dataset, preprocess_offline_one_folder
 from visual_geolocation.ml_logic.model import initialize_model, compile_model, train_model
 #from visual_geolocation.interface.workflow import
 from visual_geolocation.utils import haversine, geoscore, coord_to_geocell, geocell_to_country
@@ -39,6 +39,15 @@ def load_data_from_bucket():
 def preprocess(train_df):
     df_subset = build_labeled_dataframe(train_df, IMG_FOLDER)
     return df_subset
+
+
+def preprocess_offline():
+
+    train_df, test_df = load_data_from_bucket()
+    df_subset = build_labeled_dataframe(train_df, IMG_FOLDER)
+
+    preprocess_offline_one_folder(df_subset, IMG_FOLDER)
+
 
 
 def train():

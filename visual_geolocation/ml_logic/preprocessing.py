@@ -4,7 +4,8 @@ import zipfile
 import tensorflow as tf
 from PIL import Image
 from visual_geolocation.utils import geocell_to_class, coord_to_geocell
-
+from visual_geolocation.params import IMAGE_SIZE
+from visual_geolocation.ml_logic.data import dump_preprocessed_image
 
 
 
@@ -50,6 +51,27 @@ def build_labeled_dataframe(df, IMG_FOLDER):
     )
     subset['class'] = subset['geocell'].apply(geocell_to_class)
     return subset
+
+
+def load_image_and_label_offline(img_id, label, IMG_FOLDER, prefix, img_size):
+    """Python-level loader called through tf.py_function.
+    Converts a tensor image id into a resized numpy image array paired with its label.
+
+    Args:
+        img_id: tensor holding the image id
+        label: tensor holding the label
+        IMG_FOLDER: path to the local zip file (fixed for this dataset instance)
+        prefix: folder name inside the zip (fixed for this dataset instance)
+        img_size: target (height, width) for resizing
+
+    Returns:
+        Tuple (image_array, label) as float32 tensors.
+    """
+    img_id = img_id
+    img = load_image_from_zip(IMG_FOLDER, prefix, img_id)
+    img_array = tf.keras.utils.img_to_array(img)
+    img_array = tf.image.resize(img_array, img_size)
+    return img_array, label
 
 
 def load_image_and_label(img_id, label, IMG_FOLDER, prefix, img_size):
@@ -117,6 +139,21 @@ def make_tf_dataset(df, IMG_FOLDER, img_size=(64, 64), batch_size=16):
     dataset = dataset.map(wrapper_tf)
     dataset = dataset.prefetch(tf.data.AUTOTUNE)
     return dataset
+
+
+def preprocess_offline_one_folder(df, img_folder):
+
+    ids = df['id'].tolist()
+    labels = df['class'].tolist()
+
+    prefix = img_folder.replace(".zip", "")
+
+    for i in range(len(ids)):
+        img_array, label = load_image_and_label_offline(ids[i], labels[i], img_folder, prefix, (IMAGE_SIZE,IMAGE_SIZE))
+        dump_preprocessed_image(ids[i], img_array, label)
+
+
+
 
 
 def preprocess_features():
