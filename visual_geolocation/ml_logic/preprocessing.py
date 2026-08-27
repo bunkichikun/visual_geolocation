@@ -3,6 +3,9 @@ import zipfile
 
 import tensorflow as tf
 from PIL import Image
+from visual_geolocation.utils import geocell_to_class, coord_to_geocell
+
+
 
 
 def load_image_from_zip(IMG_FOLDER, prefix, img_id):
@@ -22,7 +25,7 @@ def load_image_from_zip(IMG_FOLDER, prefix, img_id):
     return Image.open(io.BytesIO(img_bytes))
 
 
-def build_labeled_dataframe(df, IMG_FOLDER, coord_to_geocell):
+def build_labeled_dataframe(df, IMG_FOLDER):
     """Filter a dataframe to keep only rows whose image is present in the given zip,
     and compute the geocell label for each row from its coordinates.
 
@@ -45,6 +48,7 @@ def build_labeled_dataframe(df, IMG_FOLDER, coord_to_geocell):
         lambda row: coord_to_geocell(row['longitude'], row['latitude']),
         axis=1
     )
+    subset['class'] = subset['geocell'].apply(geocell_to_class)
     return subset
 
 
@@ -84,7 +88,7 @@ def make_tf_dataset(df, IMG_FOLDER, img_size=(64, 64), batch_size=16):
     prefix = IMG_FOLDER.replace(".zip", "")
 
     ids = df['id'].tolist()
-    labels = df['geocell'].tolist()
+    labels = df['class'].tolist()
 
 
     def wrapper_tf(img_id, label):
