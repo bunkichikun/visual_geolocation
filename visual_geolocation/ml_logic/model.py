@@ -33,7 +33,9 @@ def initialize_model(input_shape: tuple) -> Model:
 
 
 def compile_model(model : Model) -> Model:
-    model.compile(loss='sparse_categorical_crossentropy',
+    loss = keras.losses.SparseCategoricalCrossentropy(ignore_class=-1)
+
+    model.compile(loss,
               optimizer='adam',
               metrics=['accuracy'])
 
