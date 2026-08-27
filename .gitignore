@@ -42,4 +42,4 @@ model/*
 !raw_data/.gitkeep
 *.ipynb
 *.zip
-*.egg-info
+*.egg-info/

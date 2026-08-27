@@ -12,14 +12,34 @@ from visual_geolocation.ml_logic.preprocessing import build_labeled_dataframe, m
 from visual_geolocation.ml_logic.model import initialize_model, compile_model, train_model
 #from visual_geolocation.interface.workflow import
 from visual_geolocation.utils import haversine, geoscore, coord_to_geocell, geocell_to_country
+from visual_geolocation.ml_logic.data import get_data_with_cache
 from visual_geolocation.params import IMG_FOLDER, CLASS_NUMBER, BATCH_SIZE, BUCKET_NAME
 
 
 
-def preprocess():
-    train_df = pd.read_csv("raw_data/final_train.csv")
+
+def load_data_from_bucket():
+    train_cache_path = Path(RAW_DATA_PATH).joinpath(TRAIN_FILE)
+    test_cache_path = Path(RAW_DATA_PATH).joinpath(TEST_FILE)
+
+    df_train = get_data_with_cache(
+        bucket_name=BUCKET_NAME,
+        source_blob_name=TRAIN_FILE,
+        cache_path=train_cache_path,
+    )
+
+    df_test = get_data_with_cache(
+        bucket_name=BUCKET_NAME,
+        source_blob_name=TEST_FILE,
+        cache_path=test_cache_path,
+    )
+    return df_train, df_test
+
+    
+def preprocess(train_df):
     df_subset = build_labeled_dataframe(train_df, IMG_FOLDER, coord_to_geocell)
     return df_subset
+
 
 
 
@@ -105,6 +125,8 @@ def evaluate_random(test_df):
     #target_country = test_df.loc[t_i, "unique_country"]
 
     #class_to_geocell(0)
+
+    print(f'the traget is : {target_country}, and the prediction is : {pred_country}')
 
     #TODO
     # accuracy = target_country == pred_country but check that the country codes are the same...

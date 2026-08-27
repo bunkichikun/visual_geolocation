@@ -51,28 +51,22 @@ def geocell_to_coord(geocell_idx, geocell_size = GEOCELL_SIZE):
 
 
 def geocell_to_country(geocell_idx):
-    """Given a Geocell index (the class identifier in our classification)
-    returns a tuple with the (country name, 3-letter-code) for the country
-    where centroid of the geocell lies.
-
-    return example ('France', 'FR1')
-    """
     lon, lat = geocell_to_coord(geocell_idx)
 
     # geojson with countries from https://geojson-maps.kyd.au/
     countries_df = gpd.read_file(os.path.join(IMAGES_PATH, BOUNDARIES_JSON))
 
-    # Create GeoDataFrame for the point
     point_gdf = gpd.GeoDataFrame(
         geometry=[Point(lon, lat)],
         crs="EPSG:4326"
     )
 
-    # Ensure CRS consistency
     countries_df = countries_df.to_crs(point_gdf.crs)
 
-    # Spatial join
     result = gpd.sjoin(point_gdf, countries_df, predicate="within")
+
+    if result.empty:
+        return None, None  # ou une valeur par défaut style ("Ocean", "N/A")
 
     return result["sovereignt"].iloc[0], result["sov_a3"].iloc[0]
 
