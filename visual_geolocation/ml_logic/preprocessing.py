@@ -50,6 +50,8 @@ def build_labeled_dataframe(df, IMG_FOLDER):
         axis=1
     )
     subset['class'] = subset['geocell'].apply(geocell_to_class)
+    subset['class'] = subset['class'].astype(int)
+    subset['geocell'] = subset['geocell'].astype(int)
     return subset
 
 
