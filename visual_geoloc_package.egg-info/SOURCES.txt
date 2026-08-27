@@ -1,0 +1,9 @@
+LICENSE
+README.md
+setup.py
+visual_geoloc_package.egg-info/PKG-INFO
+visual_geoloc_package.egg-info/SOURCES.txt
+visual_geoloc_package.egg-info/dependency_links.txt
+visual_geoloc_package.egg-info/not-zip-safe
+visual_geoloc_package.egg-info/requires.txt
+visual_geoloc_package.egg-info/top_level.txt
