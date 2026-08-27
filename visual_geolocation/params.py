@@ -30,3 +30,4 @@ LOCAL_REGISTRY_PATH = os.environ.get("LOCAL_REGISTRY_PATH")
 ## TRAINING
 CLASS_NUMBER = int(os.environ.get("CLASS_NUMBER"))
 BATCH_SIZE = int(os.environ.get("BATCH_SIZE"))
+IMAGE_SIZE = int(os.environ.get("IMAGE_SIZE"))
