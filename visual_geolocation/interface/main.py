@@ -59,7 +59,7 @@ def train():
 
     model = initialize_model(input_shape=(64, 64, 3))
     model = compile_model(model)
-    model, history = train_model(model, dataset, epochs=2)
+    model, history = train_model(model, dataset)
 
     return model, history
 
