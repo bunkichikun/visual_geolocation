@@ -5,7 +5,7 @@ import numpy as np
 from keras import Model, Sequential, layers, losses
 from typing import Tuple
 from colorama import Fore, Style
-from visual_geolocation.params import BATCH_SIZE, CLASS_NUMBER
+from visual_geolocation.params import BATCH_SIZE, CLASS_NUMBER, EPOCHS
 
 
 
@@ -15,7 +15,7 @@ def initialize_model(input_shape: tuple) -> Model:
     model = Sequential()
 
     model.add(layers.Input(shape=input_shape))
-    model.add(layers.Rescaling(1./255)) 
+    model.add(layers.Rescaling(1./255))
     model.add(layers.Conv2D(8, (4, 4), activation="relu",padding='same'))
 
     model.add(layers.MaxPool2D(pool_size=(2, 2)))
@@ -53,7 +53,7 @@ def train_model(
 
     history = model.fit(
         dataset,
-        epochs=1,
+        epochs=EPOCHS,
         batch_size=batch_size,
         verbose=1
     )
