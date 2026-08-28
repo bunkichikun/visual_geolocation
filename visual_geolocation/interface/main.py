@@ -46,8 +46,9 @@ def preprocess_offline():
     train_df, test_df = load_data_from_bucket()
 
     for i in range(0,9):
-        print(f"✅ processing file {img_folder}\n\n")
+
         img_folder = f"0{i}.zip"
+        print(f"✅ processing file {img_folder}\n\n")
         df_subset = build_labeled_dataframe(train_df, img_folder)
 
         preprocess_offline_one_folder(df_subset, img_folder)
