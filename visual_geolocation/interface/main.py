@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 from google.cloud import storage
+import tensorflow as tf
 
 from visual_geolocation.ml_logic.registry import *
 
@@ -10,7 +11,7 @@ from visual_geolocation.ml_logic.model import initialize_model, compile_model, t
 #from visual_geolocation.interface.workflow import
 from visual_geolocation.utils import haversine, geoscore, coord_to_geocell, geocell_to_country
 from visual_geolocation.ml_logic.data import get_data_with_cache , get_json, get_pickle
-from visual_geolocation.params import IMG_FOLDER, CLASS_NUMBER, BATCH_SIZE, BUCKET_NAME, RAW_DATA_PATH, TRAIN_FILE, TEST_FILE
+from visual_geolocation.params import IMG_FOLDER, CLASS_NUMBER, BATCH_SIZE, BUCKET_NAME, RAW_DATA_PATH, TRAIN_FILE, TEST_FILE, IMAGE_SIZE
 
 
 
@@ -55,18 +56,24 @@ def preprocess_offline():
 
 def train():
 
-    train_df, test_df = load_data_from_bucket()
+    # train_df, test_df = load_data_from_bucket()
 
-    df_subset = preprocess(train_df)
+    # df_subset = preprocess(train_df)
 
-    dataset = make_tf_dataset(
-        df_subset,
-        IMG_FOLDER,
-        img_size=(64, 64),
-        batch_size=BATCH_SIZE
-    )
+    # dataset = make_tf_dataset(
+    #     df_subset,
+    #     IMG_FOLDER,
+    #     img_size=(64, 64),
+    #     batch_size=BATCH_SIZE
+    # )
 
-    model = initialize_model(input_shape=(64, 64, 3))
+    dataset = tf.keras.utils.image_dataset_from_directory(
+            "gs://visual-geolocation-osv5m/preprocessed/train/XP/",
+            labels="inferred",
+            image_size=(IMAGE_SIZE,IMAGE_SIZE),
+            batch_size=BATCH_SIZE)
+
+    model = initialize_model(input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3))
     model = compile_model(model)
     model, history = train_model(model, dataset)
 
