@@ -17,17 +17,30 @@ def initialize_model(input_shape: tuple) -> Model:
 
     model.add(layers.Input(shape=input_shape))
     model.add(layers.Rescaling(1./255))
-    model.add(layers.Conv2D(8, (4, 4), activation="relu",padding='same'))
 
+    # Bloc 1
+    model.add(layers.Conv2D(16, (3, 3), activation="relu", padding='same'))
+    model.add(layers.BatchNormalization())
     model.add(layers.MaxPool2D(pool_size=(2, 2)))
 
-    model.add(layers.Flatten())
+    # Bloc 2
+    model.add(layers.Conv2D(32, (3, 3), activation="relu", padding='same'))
+    model.add(layers.BatchNormalization())
+    model.add(layers.MaxPool2D(pool_size=(2, 2)))
 
-    ### One Fully Connected layer - "Fully Connected" is equivalent to saying "Dense"
-    model.add(layers.Dense(10, activation='relu'))
+    # Bloc 3
+    model.add(layers.Conv2D(64, (3, 3), activation="relu", padding='same'))
+    model.add(layers.BatchNormalization())
+    model.add(layers.MaxPool2D(pool_size=(2, 2)))
 
-    ### Last layer - Classification Layer with NUMBER_OF_GOOD_GEOCEL outputs corresponding to NUMBER_OF_GOOD_GEOCEL digits
-    model.add(layers.Dense(CLASS_NUMBER,activation='softmax'))
+    model.add(layers.GlobalAveragePooling2D())
+
+    ### Fully Connected layers
+    model.add(layers.Dense(64, activation='relu'))
+    model.add(layers.Dropout(0.3))
+
+    ### Last layer - Classification Layer with CLASS_NUMBER outputs
+    model.add(layers.Dense(CLASS_NUMBER, activation='softmax'))
 
     return model
 
