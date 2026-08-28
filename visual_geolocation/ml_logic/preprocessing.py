@@ -70,7 +70,8 @@ def load_image_and_label_offline(img_id, label, IMG_FOLDER, prefix, img_size):
         Tuple (image_array, label) as float32 tensors.
     """
     img_id = img_id
-    img = load_image_from_zip(IMG_FOLDER, prefix, img_id)
+    #print(f"img_folder={IMG_FOLDER} prefix={prefix}  img_id={img_id}")
+    img = load_image_from_zip(IMG_FOLDER, prefix[-2:], img_id)
     img_array = tf.keras.utils.img_to_array(img, dtype='uint8')
     img_array = tf.image.resize(img_array, img_size)
     img_array = tf.cast(tf.round(img_array), "uint8")
@@ -144,17 +145,17 @@ def make_tf_dataset(df, IMG_FOLDER, img_size=(64, 64), batch_size=16):
     return dataset
 
 
-def preprocess_offline_one_folder(df, img_folder, chosen_classes):
+def preprocess_offline_one_folder(df, img_folder, chosen_classes, which):
 
     ids = df['id'].tolist()
     labels = df['class'].tolist()
 
-    prefix = img_folder.replace(".zip", "")
+    prefix = str(img_folder)[:-4]#.replace(".zip", "")
 
     for i in range(len(ids)):
         if labels[i] in chosen_classes:
             img_array, label = load_image_and_label_offline(ids[i], labels[i], img_folder, prefix, (IMAGE_SIZE,IMAGE_SIZE))
-            dump_preprocessed_image(ids[i], img_array, label)
+            dump_preprocessed_image(ids[i], img_array, label, which)
 
 
 

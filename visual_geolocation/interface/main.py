@@ -1,8 +1,10 @@
 import numpy as np
 import pandas as pd
+import datetime
 from pathlib import Path
 from google.cloud import storage
 import tensorflow as tf
+from keras.utils import set_random_seed
 
 from visual_geolocation.ml_logic.registry import *
 
@@ -49,16 +51,21 @@ def preprocess_offline(which="train"):
 
     train_df, test_df = load_data_from_bucket()
 
+    if which == "train":
+        df = train_df
+    else:
+        df = test_df
+
     for i in range(0,100):
 
         img_folder = f"{i:02d}.zip"
 
-        get_zip_file(BUCKET_NAME, Path(which).joinpath(img_folder), Path(img_folder))
+        get_zip_file(BUCKET_NAME, Path(which).joinpath(img_folder), Path(which).joinpath(img_folder))
 
-        print(f"✅ processing file {img_folder}\n\n")
-        df_subset = build_labeled_dataframe(train_df, img_folder)
+        print(f"✅ processing file {Path(which).joinpath(img_folder)}\n\n")
+        df_subset = build_labeled_dataframe(df, Path(which).joinpath(img_folder))
 
-        preprocess_offline_one_folder(df_subset, img_folder, CHOSEN_CLASSES)
+        preprocess_offline_one_folder(df_subset, Path(which).joinpath(img_folder), CHOSEN_CLASSES, which=which)
 
 
 
@@ -78,16 +85,18 @@ def train():
     # )
 
     print(TRAIN_SET_PATH)
-    dataset = tf.keras.utils.image_dataset_from_directory(
+    train_dataset, val_dataset = tf.keras.utils.image_dataset_from_directory(
             TRAIN_SET_PATH,
             labels="inferred",
-            #validation_split=VAL_SPLIT,
+            validation_split=VAL_SPLIT,
+            subset="both",
+            seed=datetime.datetime.now().second,
             image_size=(IMAGE_SIZE,IMAGE_SIZE),
             batch_size=BATCH_SIZE)
 
     model = initialize_model(input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3))
     model = compile_model(model)
-    model, history = train_model(model, dataset)
+    model, history = train_model(model, train_dataset, val_dataset)
 
     return model, history
 
