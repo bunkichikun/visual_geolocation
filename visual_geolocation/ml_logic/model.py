@@ -3,9 +3,10 @@ All the works around the predicion model
 """
 import numpy as np
 from keras import Model, Sequential, layers, losses
+from keras.callbacks import ModelCheckpoint, EarlyStopping
 from typing import Tuple
 from colorama import Fore, Style
-from visual_geolocation.params import BATCH_SIZE, CLASS_NUMBER, EPOCHS
+from visual_geolocation.params import BATCH_SIZE, CLASS_NUMBER, EPOCHS, VAL_SPLIT
 
 
 
@@ -51,9 +52,22 @@ def train_model(
     """
     print(Fore.BLUE + "\nTraining model..." + Style.RESET_ALL)
 
+    checkpoints = ModelCheckpoint(
+        "checkpoint_model.keras",
+        monitor="val_loss",
+        save_best_only=True,
+        verbose=1
+    )
+
+    early_stop = EarlyStopping(
+        patience=25,
+        restore_best_weights=True
+    )
+
     history = model.fit(
         dataset,
         epochs=EPOCHS,
+        callbacks=[checkpoints, early_stop],
         batch_size=batch_size,
         verbose=1
     )

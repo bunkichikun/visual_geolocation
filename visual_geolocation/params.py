@@ -26,6 +26,7 @@ IMAGES_PATH = os.environ.get("IMAGES_PATH")
 BOUNDARIES_JSON = os.environ.get("BOUNDARIES_JSON")
 IMG_FOLDER = os.environ.get("IMG_FOLDER")
 LOCAL_REGISTRY_PATH = os.environ.get("LOCAL_REGISTRY_PATH")
+TRAIN_SET_PATH = os.environ.get("TRAIN_SET_PATH")
 
 
 ## TRAINING
@@ -33,3 +34,4 @@ CLASS_NUMBER = int(os.environ.get("CLASS_NUMBER"))
 BATCH_SIZE = int(os.environ.get("BATCH_SIZE"))
 IMAGE_SIZE = int(os.environ.get("IMAGE_SIZE"))
 EPOCHS=int(os.environ.get("EPOCHS"))
+VAL_SPLIT=float(os.environ.get("VAL_SPLIT"))

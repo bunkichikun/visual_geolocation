@@ -81,7 +81,7 @@ def get_zip_file(bucket_name, source_json_name, cache_path):
 
         client = storage.Client()
         bucket = client.bucket(bucket_name)
-        blob = bucket.blob(source_json_name)
+        blob = bucket.blob(str(source_json_name))
         blob.download_to_filename(cache_path)
 
     print(f"✅ zip file ready at {cache_path}")

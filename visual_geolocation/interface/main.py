@@ -11,7 +11,8 @@ from visual_geolocation.ml_logic.model import initialize_model, compile_model, t
 #from visual_geolocation.interface.workflow import
 from visual_geolocation.utils import haversine, geoscore, geocell_to_class, coord_to_geocell, geocell_to_country
 from visual_geolocation.ml_logic.data import get_data_with_cache , get_json, get_pickle, get_zip_file
-from visual_geolocation.params import IMG_FOLDER, CLASS_NUMBER, BATCH_SIZE, BUCKET_NAME, RAW_DATA_PATH, TRAIN_FILE, TEST_FILE, CHOSEN_GEOCELLS,  IMAGE_SIZE
+from visual_geolocation.params import IMG_FOLDER, CLASS_NUMBER, BATCH_SIZE, BUCKET_NAME, RAW_DATA_PATH, TRAIN_FILE, \
+TEST_FILE, CHOSEN_GEOCELLS,IMAGE_SIZE, TRAIN_SET_PATH, VAL_SPLIT
 
 
 
@@ -44,7 +45,7 @@ def preprocess(train_df):
     return df_subset
 
 
-def preprocess_offline(which="test"):
+def preprocess_offline(which="train"):
 
     train_df, test_df = load_data_from_bucket()
 
@@ -52,7 +53,7 @@ def preprocess_offline(which="test"):
 
         img_folder = f"{i:02d}.zip"
 
-        get_zip_file(BUCKET_NAME, f"{which}/{img_folder}", Path(img_folder))
+        get_zip_file(BUCKET_NAME, Path(which).joinpath(img_folder), Path(img_folder))
 
         print(f"✅ processing file {img_folder}\n\n")
         df_subset = build_labeled_dataframe(train_df, img_folder)
@@ -76,9 +77,11 @@ def train():
     #     batch_size=BATCH_SIZE
     # )
 
+    print(TRAIN_SET_PATH)
     dataset = tf.keras.utils.image_dataset_from_directory(
-            "gs://visual-geolocation-osv5m/preprocessed/train/XP/",
+            TRAIN_SET_PATH,
             labels="inferred",
+            #validation_split=VAL_SPLIT,
             image_size=(IMAGE_SIZE,IMAGE_SIZE),
             batch_size=BATCH_SIZE)
 
@@ -185,12 +188,6 @@ def evaluate_most_frequent(test_df):
 
 
 if __name__ == '__main__':
-
-    client = storage.Client()
-    bucket = client.bucket(BUCKET_NAME)
-
-    blob = bucket.blob("train/00.zip")
-    blob.download_to_filename("00.zip")
 
     model, history = train()
     print("test fonction main")
