@@ -9,14 +9,16 @@ from visual_geolocation.ml_logic.registry import *
 from visual_geolocation.ml_logic.preprocessing import build_labeled_dataframe, make_tf_dataset, preprocess_offline_one_folder
 from visual_geolocation.ml_logic.model import initialize_model, compile_model, train_model
 #from visual_geolocation.interface.workflow import
-from visual_geolocation.utils import haversine, geoscore, coord_to_geocell, geocell_to_country
+from visual_geolocation.utils import haversine, geoscore, geocell_to_class, coord_to_geocell, geocell_to_country
 from visual_geolocation.ml_logic.data import get_data_with_cache , get_json, get_pickle
-from visual_geolocation.params import IMG_FOLDER, CLASS_NUMBER, BATCH_SIZE, BUCKET_NAME, RAW_DATA_PATH, TRAIN_FILE, TEST_FILE, IMAGE_SIZE
+from visual_geolocation.params import IMG_FOLDER, CLASS_NUMBER, BATCH_SIZE, BUCKET_NAME, RAW_DATA_PATH, TRAIN_FILE, TEST_FILE, CHOSEN_GEOCELLS,  IMAGE_SIZE
 
 
 
 
 
+
+CHOSEN_CLASSES = [geocell_to_class(g) for g in CHOSEN_GEOCELLS]
 
 
 def load_data_from_bucket():
@@ -52,7 +54,7 @@ def preprocess_offline():
         print(f"✅ processing file {img_folder}\n\n")
         df_subset = build_labeled_dataframe(train_df, img_folder)
 
-        preprocess_offline_one_folder(df_subset, img_folder)
+        preprocess_offline_one_folder(df_subset, img_folder, CHOSEN_CLASSES)
 
 
 
