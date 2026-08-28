@@ -15,6 +15,7 @@ def initialize_model(input_shape: tuple) -> Model:
     model = Sequential()
 
     model.add(layers.Input(shape=input_shape))
+    model.add(layers.Rescaling(1./255)) 
     model.add(layers.Conv2D(8, (4, 4), activation="relu",padding='same'))
 
     model.add(layers.MaxPool2D(pool_size=(2, 2)))
