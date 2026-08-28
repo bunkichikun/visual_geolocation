@@ -71,8 +71,9 @@ def load_image_and_label_offline(img_id, label, IMG_FOLDER, prefix, img_size):
     """
     img_id = img_id
     img = load_image_from_zip(IMG_FOLDER, prefix, img_id)
-    img_array = tf.keras.utils.img_to_array(img)
+    img_array = tf.keras.utils.img_to_array(img, dtype='uint8')
     img_array = tf.image.resize(img_array, img_size)
+    img_array = tf.cast(tf.round(img_array), "uint8")
     return img_array, label
 
 

@@ -4,6 +4,7 @@ from pathlib import Path
 from google.cloud import storage
 from colorama import Fore, Style
 from keras.utils.image_utils import  array_to_img
+import tensorflow as tf
 
 
 
@@ -90,6 +91,8 @@ def load_data_from_bucket(BUCKET_NAME, RAW_DATA_PATH, CLASS_TO_GEOCELL_MAP, BOUN
 def dump_preprocessed_image(id, img_array, label):
     client = storage.Client()
     bucket = client.bucket(BUCKET_NAME)
-    blob = bucket.blob(f"preprocessed/train/00/{str(label).split('.')[0]}/{id}_pp{IMAGE_SIZE}.jpg")
-    blob.upload_from_string(array_to_img(img_array).tobytes(), content_type="image/jpeg")
-    print(f"dumped into preprocessed/train/{IMG_FOLDER.split('.')[0]}/{str(label).split('.')[0]}/{id}_pp{IMAGE_SIZE}.jpg !!!")
+    print(img_array)
+    encoded = tf.io.encode_png(img_array)
+    blob = bucket.blob(f"preprocessed/train/{IMAGE_SIZE}/{str(label).split('.')[0]}/{id}_pp.png")
+    blob.upload_from_string(encoded.numpy(), content_type="image/png")
+    #print(f"dumped into preprocessed/train/{IMG_FOLDER.split('.')[0]}/{str(label).split('.')[0]}/{id}_pp{IMAGE_SIZE}.png !!!")
