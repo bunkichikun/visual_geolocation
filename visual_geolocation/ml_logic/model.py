@@ -44,7 +44,8 @@ def compile_model(model : Model) -> Model:
 
 def train_model(
         model: Model,
-        dataset,
+        train_dataset,
+        val_dataset,
         batch_size=BATCH_SIZE
     ) -> Tuple[Model, dict]:
     """
@@ -65,7 +66,8 @@ def train_model(
     )
 
     history = model.fit(
-        dataset,
+        train_dataset,
+        validation_data=val_dataset,
         epochs=EPOCHS,
         callbacks=[checkpoints, early_stop],
         batch_size=batch_size,

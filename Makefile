@@ -6,6 +6,10 @@ load_data_from_bucket:
 preprocess:
 	python -c 'from visual_geolocation.interface.main import preprocess_offline; preprocess_offline() '
 
+preprocess_test:
+	python -c 'from visual_geolocation.interface.main import preprocess_offline; preprocess_offline(which="test") '
+
+
 run_main:
 	python -m visual_geolocation.interface.main
 
