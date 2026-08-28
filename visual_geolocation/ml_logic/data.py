@@ -70,6 +70,23 @@ def get_pickle(bucket_name, source_json_name, cache_path):
     print(f"✅ pickle ready at {cache_path}")
 
 
+def get_zip_file(bucket_name, source_json_name, cache_path):
+
+    if cache_path.is_file():
+        print(Fore.BLUE + "\nLoad zip file from local file..." + Style.RESET_ALL)
+    else:
+        print(Fore.BLUE + "\nLoad zip file from GCS bucket..." + Style.RESET_ALL)
+
+        cache_path.parent.mkdir(parents=True, exist_ok=True)
+
+        client = storage.Client()
+        bucket = client.bucket(bucket_name)
+        blob = bucket.blob(source_json_name)
+        blob.download_to_filename(cache_path)
+
+    print(f"✅ zip file ready at {cache_path}")
+
+
 def load_data_from_bucket(BUCKET_NAME, RAW_DATA_PATH, CLASS_TO_GEOCELL_MAP, BOUNDARIES_JSON):
 
     pickle_path = Path(RAW_DATA_PATH).joinpath(CLASS_TO_GEOCELL_MAP)
