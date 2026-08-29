@@ -23,6 +23,9 @@ reinstall_package:
 	@pip uninstall -y visual_geoloc_package || :
 	@pip install -e .
 
+run_api:
+	uvicorn visual_geolocation.api.fast:app --reload
+
 clean:
 	@rm -f */version.txt
 	@rm -f .coverage

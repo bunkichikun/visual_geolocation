@@ -71,6 +71,7 @@ def train_model(
         f"checkpoint_model_{datetime.datetime.now().strftime('%m_%d_%H:%M')}.keras",
         monitor="val_loss",
         save_best_only=True,
+        save_weights_only=False,
         verbose=1
     )
 
@@ -91,3 +92,8 @@ def train_model(
     print(f"✅ Model trained with max accuracy: {round(np.max(history.history['accuracy']), 2)}")
 
     return model, history
+
+
+def predict_by_id(pic_id):
+    predicted_class = 42
+    return predicted_class

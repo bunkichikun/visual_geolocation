@@ -43,3 +43,8 @@ model/*
 *.ipynb
 *.zip
 *egg-info/*
+
+nohup.out
+checkpoint_model*.keras
+.env~
+poids*

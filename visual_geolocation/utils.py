@@ -49,7 +49,7 @@ def coord_to_geocell(lon, lat, geocell_size = GEOCELL_SIZE):
 
 def geocell_to_coord(geocell_idx, geocell_size = GEOCELL_SIZE):
     """Given a Geocell index (the class identifier in our classification)
-    returns the latitude and longitude of the Geocell centroid.
+    returns the longitude and latiture of the Geocell centroid.
     """
 
     lat_bin = geocell_idx %  ((LAT_MAX - LAT_MIN) // geocell_size +1)
