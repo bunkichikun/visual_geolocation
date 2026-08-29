@@ -105,11 +105,11 @@ def load_data_from_bucket(BUCKET_NAME, RAW_DATA_PATH, CLASS_TO_GEOCELL_MAP, BOUN
     )
 
 
-def dump_preprocessed_image(id, img_array, label, which):
+def dump_preprocessed_image(id, img_array, label, which, dir_num):
     client = storage.Client()
     bucket = client.bucket(BUCKET_NAME)
     #print(img_array)
     encoded = tf.io.encode_png(img_array)
-    blob = bucket.blob(f"preprocessed/{which}/{IMAGE_SIZE}/{str(label).split('.')[0]}/{id}_pp.png")
+    blob = bucket.blob(f"preprocessed/{which}/{IMAGE_SIZE}/chunk_{dir_num}/{str(label).split('.')[0]}/{id}_pp.png")
     blob.upload_from_string(encoded.numpy(), content_type="image/png")
     #print(f"dumped into preprocessed/train/{IMG_FOLDER.split('.')[0]}/{str(label).split('.')[0]}/{id}_pp{IMAGE_SIZE}.png !!!")

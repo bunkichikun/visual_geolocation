@@ -1,6 +1,7 @@
 """
 All the works around the predicion model
 """
+import datetime
 import numpy as np
 from keras import Model, Sequential, layers, losses
 from keras.callbacks import ModelCheckpoint, EarlyStopping
@@ -67,7 +68,7 @@ def train_model(
     print(Fore.BLUE + "\nTraining model..." + Style.RESET_ALL)
 
     checkpoints = ModelCheckpoint(
-        "checkpoint_model.keras",
+        f"checkpoint_model_{datetime.datetime.now().strftime('%m_%d_%H:%M')}.keras",
         monitor="val_loss",
         save_best_only=True,
         verbose=1

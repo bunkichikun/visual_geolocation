@@ -145,7 +145,7 @@ def make_tf_dataset(df, IMG_FOLDER, img_size=(64, 64), batch_size=16):
     return dataset
 
 
-def preprocess_offline_one_folder(df, img_folder, chosen_classes, which):
+def preprocess_offline_one_folder(df, img_folder,  which, dir_num):
 
     ids = df['id'].tolist()
     labels = df['class'].tolist()
@@ -153,9 +153,9 @@ def preprocess_offline_one_folder(df, img_folder, chosen_classes, which):
     prefix = str(img_folder)[:-4]#.replace(".zip", "")
 
     for i in range(len(ids)):
-        if labels[i] in chosen_classes:
+        if labels[i] != -1:
             img_array, label = load_image_and_label_offline(ids[i], labels[i], img_folder, prefix, (IMAGE_SIZE,IMAGE_SIZE))
-            dump_preprocessed_image(ids[i], img_array, label, which)
+            dump_preprocessed_image(ids[i], img_array, label, which, dir_num)
 
 
 
