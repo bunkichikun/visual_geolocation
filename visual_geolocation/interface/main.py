@@ -14,14 +14,14 @@ from visual_geolocation.ml_logic.model import initialize_model, compile_model, t
 from visual_geolocation.utils import haversine, geoscore, geocell_to_class, coord_to_geocell, geocell_to_country
 from visual_geolocation.ml_logic.data import get_data_with_cache , get_json, get_pickle, get_zip_file
 from visual_geolocation.params import IMG_FOLDER, CLASS_NUMBER, BATCH_SIZE, BUCKET_NAME, RAW_DATA_PATH, TRAIN_FILE, \
-TEST_FILE, CHOSEN_GEOCELLS,IMAGE_SIZE, TRAIN_SET_PATH, VAL_SPLIT
+TEST_FILE, IMAGE_SIZE, TRAIN_SET_PATH, VAL_SPLIT
 
 
 
 
 
 
-CHOSEN_CLASSES = [geocell_to_class(g) for g in CHOSEN_GEOCELLS]
+#CHOSEN_CLASSES = [geocell_to_class(g) for g in CHOSEN_GEOCELLS]
 
 
 def load_data_from_bucket():
@@ -65,7 +65,7 @@ def preprocess_offline(which="train"):
         print(f"✅ processing file {Path(which).joinpath(img_folder)}\n\n")
         df_subset = build_labeled_dataframe(df, Path(which).joinpath(img_folder))
 
-        preprocess_offline_one_folder(df_subset, Path(which).joinpath(img_folder), CHOSEN_CLASSES, which=which)
+        preprocess_offline_one_folder(df_subset, Path(which).joinpath(img_folder), which, i%5)
 
 
 

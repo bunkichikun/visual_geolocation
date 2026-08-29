@@ -11,7 +11,7 @@ from pathlib import Path
 from shapely.geometry import Point
 
 from visual_geolocation.params import GEOCELL_SIZE, LON_MIN, LON_MAX, LAT_MIN, LAT_MAX, RAW_DATA_PATH,\
-    CLASS_TO_GEOCELL_MAP, IMAGES_PATH, BOUNDARIES_JSON, BUCKET_NAME, CHOSEN_GEOCELLS
+    CLASS_TO_GEOCELL_MAP, IMAGES_PATH, BOUNDARIES_JSON, BUCKET_NAME
 from visual_geolocation.ml_logic.data import get_pickle , get_json, load_data_from_bucket
 
 
