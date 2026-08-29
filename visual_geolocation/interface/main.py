@@ -65,7 +65,7 @@ def preprocess_offline(which="train"):
         print(f"✅ processing file {Path(which).joinpath(img_folder)}\n\n")
         df_subset = build_labeled_dataframe(df, Path(which).joinpath(img_folder))
 
-        preprocess_offline_one_folder(df_subset, Path(which).joinpath(img_folder), which, i%5)
+        preprocess_offline_one_folder(df_subset, Path(which).joinpath(img_folder), which, i//5)
 
 
 
