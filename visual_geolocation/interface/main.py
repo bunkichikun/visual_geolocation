@@ -71,19 +71,31 @@ def preprocess_offline(which="train"):
 
 
 
-def train():
+def train_continuation(model):
+    for i in range(1,5):
+        #suppose the path is ends with "chunk_0"
+        train_set_path=f"{TRAIN_SET_PATH[:-1]}{i}"
 
-    # train_df, test_df = load_data_from_bucket()
+        print(f"""✅ Continuing training of chunk {i} @ {train_set_path}""")
 
-    # df_subset = preprocess(train_df)
+        train_dataset, val_dataset = tf.keras.utils.image_dataset_from_directory(
+            train_set_path,
+            labels="inferred",
+            validation_split=VAL_SPLIT,
+            subset="both",
+            seed=datetime.datetime.now().second,
+            image_size=(IMAGE_SIZE,IMAGE_SIZE),
+            batch_size=BATCH_SIZE)
 
-    # dataset = make_tf_dataset(
-    #     df_subset,
-    #     IMG_FOLDER,
-    #     img_size=(64, 64),
-    #     batch_size=BATCH_SIZE
-    # )
+        model, history = train_model(model, train_dataset, val_dataset)
+        save_model(model)
 
+    return model, history
+
+
+def train_first_time():
+
+    print(f"""✅ Starting training at {TRAIN_SET_PATH}""")
     print(TRAIN_SET_PATH)
     train_dataset, val_dataset = tf.keras.utils.image_dataset_from_directory(
             TRAIN_SET_PATH,
@@ -198,5 +210,10 @@ def evaluate_most_frequent(test_df):
 
 if __name__ == '__main__':
 
-    model, history = train()
-    print("test fonction main")
+    print("Training a first model on Chunk_0")
+    model, history = train_first_time()
+    save_model(model)
+
+    train_continuation(model)
+
+    print("end of training")
