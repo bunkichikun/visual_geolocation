@@ -83,7 +83,7 @@ def initialize_model(input_shape: tuple) -> Model:
     model.add(layers.Conv2D(256, (3, 3), activation="relu", padding='same'))
     model.add(layers.MaxPool2D(pool_size=(2, 2)))
 
-    
+
     # Bloc 2
     model.add(layers.Conv2D(128, (3, 3), activation="relu", padding='same'))
     model.add(layers.BatchNormalization())
@@ -92,17 +92,17 @@ def initialize_model(input_shape: tuple) -> Model:
     model.add(layers.BatchNormalization())
 
     model.add(layers.MaxPool2D(pool_size=(2, 2)))
-    
+
     # Bloc 3
-    model.add(layers.Conv2D(128, (3, 3), activation="relu", padding='same'))
-    model.add(layers.GlobalAveragePooling2D())    
+    model.add(layers.Conv2D(256, (3, 3), activation="relu", padding='same'))
+    model.add(layers.GlobalAveragePooling2D())
     model.add(layers.Dropout(0.2))
 
     # Flatten
     model.add(layers.Flatten())
-    
+
     ### Fully Connected layers
-    model.add(layers.Dense(128, activation='relu'))
+    model.add(layers.Dense(256, activation='relu'))
     #model.add(layers.Dropout(0.3))
 
     ### Fully Connected layers-2
@@ -111,7 +111,7 @@ def initialize_model(input_shape: tuple) -> Model:
 
     ### Fully Connected layers-3
     model.add(layers.Dense(512, activation='relu'))
-     
+
     ### Last layer - Classification Layer with CLASS_NUMBER outputs
     model.add(layers.Dense(CLASS_NUMBER, activation='softmax'))
 
