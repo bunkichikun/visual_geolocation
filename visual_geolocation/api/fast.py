@@ -25,9 +25,11 @@ app.add_middleware(
 
 
 def get_coord_from_id(test_df, id):
-    y = test_df.loc[int(id),:]    ## TODO should be the pic ID, not the anonymous index of test_final.csv
-    return y["longitude"], y["latitude"]
-
+    try:
+        y = test_df.loc[int(id),:]
+        return y["longitude"], y["latitude"]
+    except:
+        raise ValueError("❌ Unknown Challenge {id}")
 
 # http://127.0.0.1:8000/evaluate?guessed_longitude=-73.950655&guessed_latitude=40.783282&challenge_id=2
 @app.get("/evaluate")
@@ -49,11 +51,8 @@ def predict(
     * the true location (long & lat)
 
     """
-
-
-
     y_human = geocell_to_class(coord_to_geocell(guessed_longitude, guessed_latitude))
-    coord_from_test = get_coord_from_id(app.state.test_df, challenge_id) ## TODO get the right coord from the test file
+    coord_from_test = get_coord_from_id(app.state.test_df, challenge_id)
     y_true = geocell_to_class(coord_to_geocell(coord_from_test[0], coord_from_test[1]))
 
     #y_machine = app.state.model.predict(challenge_id)  ## TODO make the prediction right

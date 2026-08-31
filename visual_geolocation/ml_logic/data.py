@@ -1,5 +1,5 @@
 import pandas as pd
-from visual_geolocation.params import GCP_PROJECT, BUCKET_NAME, IMG_FOLDER, IMAGE_SIZE, RAW_DATA_PATH, TEST_FILE
+from visual_geolocation.params import GCP_PROJECT, BUCKET_NAME, IMG_FOLDER, IMAGE_SIZE, RAW_DATA_PATH, TEST_FILE, TEST_FILE_FOR_FRONT
 from pathlib import Path
 from google.cloud import storage
 from colorama import Fore, Style
@@ -116,11 +116,11 @@ def dump_preprocessed_image(id, img_array, label, which, dir_num):
 
 
 def load_test_data_from_bucket():
-    test_cache_path = Path(RAW_DATA_PATH).joinpath(TEST_FILE)
+    test_cache_path = Path(RAW_DATA_PATH).joinpath(TEST_FILE_FOR_FRONT)
 
     df_test = get_data_with_cache(
         bucket_name=BUCKET_NAME,
-        source_blob_name=TEST_FILE,
+        source_blob_name=TEST_FILE_FOR_FRONT,
         cache_path=test_cache_path,
     )
     return  df_test
