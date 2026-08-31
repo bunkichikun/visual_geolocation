@@ -7,6 +7,7 @@ from visual_geolocation.params import LOCAL_REGISTRY_PATH, BUCKET_NAME, MODEL_TA
 from colorama import Fore, Style
 from tensorflow import keras
 from google.cloud import storage
+from visual_geolocation.ml_logic.model import haversine_metric, compile_model
 
 
 def save_results(params: dict, metrics: dict) -> None:
@@ -90,7 +91,12 @@ def load_model(stage="Production") -> keras.Model:
 
         print(Fore.BLUE + f"\nLoad latest model from disk..." + Style.RESET_ALL)
 
-        latest_model = keras.models.load_model(most_recent_model_path_on_disk)
+        latest_model = keras.models.load_model(
+            most_recent_model_path_on_disk,
+            custom_objects={"haversine_metric": haversine_metric},
+            compile=False
+        )
+        latest_model = compile_model(latest_model)
 
         print("✅ Model loaded from local disk")
 
