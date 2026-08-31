@@ -5,6 +5,8 @@ from pathlib import Path
 from google.cloud import storage
 import tensorflow as tf
 from keras.utils import set_random_seed
+from PIL import Image
+
 
 from visual_geolocation.ml_logic.registry import *
 
@@ -14,7 +16,10 @@ from visual_geolocation.ml_logic.model import initialize_model, compile_model, t
 from visual_geolocation.utils import haversine, geoscore, geocell_to_class, coord_to_geocell, geocell_to_country
 from visual_geolocation.ml_logic.data import get_data_with_cache , get_json, get_pickle, get_zip_file
 from visual_geolocation.params import IMG_FOLDER, CLASS_NUMBER, BATCH_SIZE, BUCKET_NAME, RAW_DATA_PATH, TRAIN_FILE, \
-TEST_FILE, IMAGE_SIZE, TRAIN_SET_PATH, VAL_SPLIT
+TEST_FILE, IMAGE_SIZE, TRAIN_SET_PATH, VAL_SPLIT, TEST_SET_PATH
+
+
+
 
 
 
@@ -72,8 +77,9 @@ def preprocess_offline(which="train"):
 
 
 def train_continuation(model):
-    for i in range(1,5):
+    for i in [1,2,3,5,6,10,11,12,13,15,16]:
         #suppose the path is ends with "chunk_0"
+
         train_set_path=f"{TRAIN_SET_PATH[:-1]}{i}"
 
         print(f"""✅ Continuing training of chunk {i} @ {train_set_path}""")
@@ -114,12 +120,79 @@ def train_first_time():
 
 
 
-def evaluate ():
-  pass
+def evaluate(stage: str = "Production") -> tuple[float, float]:
+    """
+    Evaluate the performance of the latest production model on the preprocessed test set.
+    Return a tuple (accuracy, haversine_distance).
+    """
+    print(Fore.MAGENTA + "\n⭐️ Use case: evaluate" + Style.RESET_ALL)
+
+    model = load_model(stage=stage)
+    assert model is not None
+
+    if MODEL_TARGET == "local" :
+
+        test_dataset = tf.keras.utils.image_dataset_from_directory(
+        TEST_SET_PATH,
+        labels="inferred",
+        image_size=(IMAGE_SIZE, IMAGE_SIZE),
+        batch_size=BATCH_SIZE
+        )
+
+    else :
+        test_dataset = tf.keras.utils.image_dataset_from_directory(
+        f"gs://{BUCKET_NAME}/preprocessed/test/256",
+        labels="inferred",
+        image_size=(IMAGE_SIZE, IMAGE_SIZE),
+        batch_size=BATCH_SIZE
+    )
+
+    if test_dataset.cardinality().numpy() == 0:
+        print("❌ No data to evaluate on")
+        return None
+
+    results = model.evaluate(test_dataset, verbose=1, return_dict=True)
+    accuracy = results["accuracy"]
+    haversine_distance = results["haversine_metric"]
+
+    params = dict(
+        context="evaluate",
+        row_count=test_dataset.cardinality().numpy() * BATCH_SIZE
+    )
+
+    save_results(params=params, metrics=results)
+
+    print(f"✅ evaluate() done, accuracy: {round(accuracy, 2)}, haversine distance: {round(haversine_distance, 2)} km \n")
+
+    return accuracy, haversine_distance
 
 
-def predict (X_pred : pd.DataFrame = None) -> np.ndarray:
-  pass
+def predict(X_pred: pd.DataFrame = None) -> np.ndarray:
+    """
+    Make a prediction using the latest trained model
+    """
+
+    print("\n⭐️ Use case: predict")
+
+    if X_pred is None:
+        X_pred = pd.DataFrame(dict(
+            image_path=["/home/louis/code/bunkichikun/visual_geolocation/raw_data/01/test/256/1/177677130905723_pp.png"]
+        ))
+
+    model = load_model()
+    assert model is not None
+
+    images = []
+
+    for image_path in X_pred['image_path']:
+        img = Image.open(image_path)
+        img_array = tf.keras.utils.img_to_array(img)
+        img_array = tf.image.resize(img_array, (IMAGE_SIZE, IMAGE_SIZE))
+        images.append(img_array)
+
+    X_processed = tf.stack(images)
+    y_pred = model.predict(X_processed)
+    return y_pred
 
 
 def evaluate_baseline():
@@ -210,10 +283,16 @@ def evaluate_most_frequent(test_df):
 
 if __name__ == '__main__':
 
-    print("Training a first model on Chunk_0")
-    model, history = train_first_time()
-    save_model(model)
+    # print("Training a first model on Chunk_0")
+    # model, history = train_first_time()
+    # save_model(model)
 
-    train_continuation(model)
+    model = load_model(stage="Production")
+
+    # train_continuation(model)
+
+    # evaluate(model)
+
+    predict()
 
     print("end of training")
