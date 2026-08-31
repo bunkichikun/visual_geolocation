@@ -114,7 +114,12 @@ def load_model(stage="Production") -> keras.Model:
             latest_model_path_to_save = os.path.join(LOCAL_REGISTRY_PATH, latest_blob.name)
             latest_blob.download_to_filename(latest_model_path_to_save)
 
-            latest_model = keras.models.load_model(latest_model_path_to_save)
+            latest_model = keras.models.load_model(
+                most_recent_model_path_on_disk,
+                custom_objects={"haversine_metric": haversine_metric},
+                compile=False
+            )
+            latest_model = compile_model(latest_model)
 
             print("✅ Latest model downloaded from cloud storage")
 
