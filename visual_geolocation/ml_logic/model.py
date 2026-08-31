@@ -3,7 +3,7 @@ All the works around the predicion model
 """
 import datetime
 import numpy as np
-from keras import Model, Sequential, layers, losses, backend
+from keras import Model, Sequential, layers, losses
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 import tensorflow as tf
 from typing import Tuple
@@ -14,54 +14,58 @@ from visual_geolocation.utils import geocell_to_coord, class_to_geocell
 
 
 def init_class_to_coord():
-    class_to_coord_map = [ geocell_to_coord(class_to_geocell(i)) for i in range(CLASS_NUMBER)]
+    """Construit deux tenseurs denses (lat, lon) indexés par numéro de classe.
+    class_to_lat[i] / class_to_lon[i] donnent les coordonnées du centre de la classe i.
 
-    keys_lat = tf.constant(range(CLASS_NUMBER), dtype=tf.int64)
-    values_lat = tf.constant([c[1] for c in class_to_coord_map], dtype=tf.float32)
-    table_lat = tf.lookup.StaticHashTable(
-        tf.lookup.KeyValueTensorInitializer(keys_lat, values_lat),
-        default_value=0.0)
+    Remplace l'ancienne implémentation basée sur tf.lookup.StaticHashTable :
+    ces tables sont des ressources CPU-only, incompatibles avec la compilation
+    XLA sur GPU (erreur "resource located in device CPU:0 from device GPU:0").
+    tf.gather sur un tenseur dense fonctionne nativement sur GPU et avec XLA.
+    """
+    class_to_coord_map = [geocell_to_coord(class_to_geocell(i)) for i in range(CLASS_NUMBER)]
 
-    keys_lon = tf.constant(range(CLASS_NUMBER), dtype=tf.int64)
-    values_lon = tf.constant([c[0] for c in class_to_coord_map], dtype=tf.float32)
-    table_lon = tf.lookup.StaticHashTable(
-        tf.lookup.KeyValueTensorInitializer(keys_lon, values_lon),
-        default_value=0.0)
+    class_to_lat = [c[1] for c in class_to_coord_map]
+    class_to_lon = [c[0] for c in class_to_coord_map]
 
-    return table_lat, table_lon
+    lat_tensor = tf.constant(class_to_lat, dtype=tf.float32)
+    lon_tensor = tf.constant(class_to_lon, dtype=tf.float32)
 
-## To reimplement the class_to_coord function
-STATIC_CLASS_TO_LAT, STATIC_CLASS_TO_LON = init_class_to_coord()
+    return lat_tensor, lon_tensor
+
+
+CLASS_TO_LAT_TENSOR, CLASS_TO_LON_TENSOR = init_class_to_coord()
+
 
 @tf.keras.utils.register_keras_serializable()
 def haversine_metric(y_true, y_pred):
-    #tf.print(f"y_true.shape={y_true.shape}\ny_true={y_true}\ny_pred.shape={y_pred.shape}\ny_pred={y_pred}")
-    #tf.print(y_true)
+    """Distance haversine moyenne (en km) entre la classe réelle et la classe prédite,
+    en utilisant les coordonnées du centre de chaque géocell.
+    """
     R = 6371.0
 
-    # Conversion from degrees to radians
-    # y_true[:, 0] = latitude, y_true[:, 1] = longitude
+    y_true_idx = tf.cast(tf.reshape(y_true, [-1]), tf.int32)
+    y_pred_idx = tf.cast(tf.math.argmax(y_pred, axis=-1), tf.int32)
 
-    lat1 = STATIC_CLASS_TO_LAT.lookup(tf.cast(y_true, tf.int64))
-    lon1 = STATIC_CLASS_TO_LON.lookup(tf.cast(y_true, tf.int64))
-    lat2 = STATIC_CLASS_TO_LAT.lookup(tf.math.argmax(y_pred))
-    lon2 = STATIC_CLASS_TO_LON.lookup(tf.math.argmax(y_pred))
+    lat1 = tf.gather(CLASS_TO_LAT_TENSOR, y_true_idx)
+    lon1 = tf.gather(CLASS_TO_LON_TENSOR, y_true_idx)
+    lat2 = tf.gather(CLASS_TO_LAT_TENSOR, y_pred_idx)
+    lon2 = tf.gather(CLASS_TO_LON_TENSOR, y_pred_idx)
 
+    # Conversion degrés -> radians
     lat1 = lat1 * (3.141592653589793 / 180.0)
     lon1 = lon1 * (3.141592653589793 / 180.0)
     lat2 = lat2 * (3.141592653589793 / 180.0)
     lon2 = lon2 * (3.141592653589793 / 180.0)
 
-    # Delta lat & long
     dlat = lat2 - lat1
     dlon = lon2 - lon1
 
-    # haversine formula
-    a = tf.math.sin(dlat / 2.0)**2 + tf.math.cos(lat1) * tf.math.cos(lat2) * tf.math.sin(dlon / 2.0)**2
+    # Formule de haversine
+    a = tf.math.sin(dlat / 2.0) ** 2 + tf.math.cos(lat1) * tf.math.cos(lat2) * tf.math.sin(dlon / 2.0) ** 2
 
-    # Numerical Stabilisation to avoid a NaN
-    c = 2.0 * tf.math.asin(backend.sqrt(backend.clip(a, 0.0, 1.0)))
-    # Returns mean distance over all batch
+    # Stabilisation numérique pour éviter les NaN
+    c = 2.0 * tf.math.asin(tf.math.sqrt(tf.clip_by_value(a, 0.0, 1.0)))
+
     return tf.reduce_mean(R * c)
 
 

@@ -3,7 +3,7 @@ from visual_geolocation.params import GCP_PROJECT, BUCKET_NAME, IMG_FOLDER, IMAG
 from pathlib import Path
 from google.cloud import storage
 from colorama import Fore, Style
-from keras.utils.image_utils import  array_to_img
+from keras.utils import  array_to_img
 import tensorflow as tf
 
 
