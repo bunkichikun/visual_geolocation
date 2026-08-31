@@ -27,7 +27,7 @@ BOUNDARIES_JSON = os.environ.get("BOUNDARIES_JSON")
 IMG_FOLDER = os.environ.get("IMG_FOLDER")
 LOCAL_REGISTRY_PATH = os.environ.get("LOCAL_REGISTRY_PATH")
 TRAIN_SET_PATH = os.environ.get("TRAIN_SET_PATH")
-
+TEST_SET_PATH = os.environ.get("TEST_SET_PATH")
 
 ## TRAINING
 CLASS_NUMBER = int(os.environ.get("CLASS_NUMBER"))
