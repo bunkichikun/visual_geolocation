@@ -43,6 +43,7 @@ model/*
 *.ipynb
 *.zip
 *egg-info/*
+*visual_geoloc_package.egg-info
 
 nohup.out
 checkpoint_model*.keras
