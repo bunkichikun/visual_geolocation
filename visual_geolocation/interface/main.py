@@ -243,11 +243,11 @@ def evaluate_random(test_df):
 
     #class_to_geocell(0)
 
-    print(f'the traget is : {target_country}, and the prediction is : {pred_country}')
+    #print(f'the traget is : {target_country}, and the prediction is : {pred_country}')
 
-    #TODO
-    # accuracy = target_country == pred_country but check that the country codes are the same...
-    accuracy = np.nan
+
+    # TODO later Country accuracy = target_country == pred_country but check that the country codes are the same...
+    accuracy = coord_to_geocell(target_lon, target_lat) == coord_to_geocell(pred_lon, pred_lat)
 
     return s_geoscore, d_haversine, accuracy
 
@@ -256,7 +256,7 @@ def evaluate_random(test_df):
 def evaluate_most_frequent(test_df):
     """Returns the Geoscore, Haversine distance and Country Accuracy of classification
     always predicting the most frequent class in training"""
-    MOST_FREQUENT_CLASS = 42
+    MOST_FREQUENT_CLASS = 3
 
     t_i = np.random.randint(test_df.shape[0])
     target_lon, target_lat = test_df.loc[t_i , "longitude"], test_df.loc[t_i , "latitude"]
@@ -266,7 +266,7 @@ def evaluate_most_frequent(test_df):
 
     s_geoscore = geoscore(d_haversine)
 
-    accuracy = np.nan # TODO Later, when test.csv is available
+    accuracy = MOST_FREQUENT_CLASS == geocell_to_class(coord_to_geocell(target_lon, target_lat))
 
     return s_geoscore, d_haversine, accuracy
 
