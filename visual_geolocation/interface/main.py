@@ -20,15 +20,6 @@ TEST_FILE, IMAGE_SIZE, TRAIN_SET_PATH, VAL_SPLIT, TEST_SET_PATH
 
 
 
-
-
-
-
-
-
-#CHOSEN_CLASSES = [geocell_to_class(g) for g in CHOSEN_GEOCELLS]
-
-
 def load_data_from_bucket():
     train_cache_path = Path(RAW_DATA_PATH).joinpath(TRAIN_FILE)
     test_cache_path = Path(RAW_DATA_PATH).joinpath(TEST_FILE)

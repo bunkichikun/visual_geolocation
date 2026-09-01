@@ -9,6 +9,15 @@ preprocess:
 preprocess_test:
 	python -c 'from visual_geolocation.interface.main import preprocess_offline; preprocess_offline(which="test") '
 
+docker_update:
+	docker build  --platform linux/amd64   -t $(GCP_REGION)-docker.pkg.dev/$(GCP_PROJECT)/visual-geolocation/$(GAR_IMAGE):prod .
+
+docker_update_and_run: docker_update
+	docker run -it -e PORT=8000 -e GOOGLE_APPLICATION_CREDENTIALS=/gcp.json   -p 8000:8000 --volume ${GOOGLE_APPLICATION_CREDENTIALS}:/gcp.json:ro  --env-file .env $(GCP_REGION)-docker.pkg.dev/$(GCP_PROJECT)/visual-geolocation/$(GAR_IMAGE):prod
+
+docker_update_and_deploy: docker_update
+	docker push $(GCP_REGION)-docker.pkg.dev/$(GCP_PROJECT)/visual-geolocation/$(GAR_IMAGE):prod
+  gcloud --project=$(GCP_PROJECT) run deploy --image $(GCP_REGION)-docker.pkg.dev/$(GCP_PROJECT)/visual-geolocation/$(GAR_IMAGE):prod --memory $(GAR_MEMORY) --region $(GCP_REGION) --env-vars-file .env.yaml
 
 run_main:
 	python -m visual_geolocation.interface.main

@@ -8,8 +8,9 @@ from keras.callbacks import ModelCheckpoint, EarlyStopping
 import tensorflow as tf
 from typing import Tuple
 from colorama import Fore, Style
-from visual_geolocation.params import BATCH_SIZE, CLASS_NUMBER, EPOCHS, VAL_SPLIT
+from visual_geolocation.params import BATCH_SIZE, CLASS_NUMBER, EPOCHS, VAL_SPLIT, IMAGE_SIZE
 from visual_geolocation.utils import geocell_to_coord, class_to_geocell
+from PIL import Image
 
 
 
@@ -147,6 +148,14 @@ def train_model(
     return model, history
 
 
-def predict_by_id(pic_id):
-    predicted_class = 42
-    return predicted_class
+def predict_by_path(model, pic_path):
+
+    images = []
+    img = Image.open(pic_path)
+    img_array = tf.keras.utils.img_to_array(img)
+    img_array = tf.image.resize(img_array, (IMAGE_SIZE, IMAGE_SIZE))
+    images.append(img_array)
+
+    X_processed = tf.stack(images)
+    y_pred = model.predict(X_processed)
+    return y_pred
