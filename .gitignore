@@ -19,6 +19,9 @@ __pycache__
 raw_data/
 notebooks/
 images/
+preprocessed/
+registry/
+data_for_front/
 
 # Environments
 .env
