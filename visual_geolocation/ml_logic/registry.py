@@ -3,11 +3,12 @@ import os
 import time
 import pickle
 
-from visual_geolocation.params import LOCAL_REGISTRY_PATH, BUCKET_NAME, MODEL_TARGET
+from visual_geolocation.params import LOCAL_REGISTRY_PATH, BUCKET_NAME, MODEL_TARGET, IMAGE_SIZE
 from colorama import Fore, Style
 from tensorflow import keras
 from google.cloud import storage
-from visual_geolocation.ml_logic.model import haversine_metric, compile_model
+from visual_geolocation.ml_logic.model import haversine_metric, compile_model, initialize_model
+
 from pathlib import Path
 
 
@@ -111,10 +112,15 @@ def load_model(stage="Production") -> keras.Model:
         try:
             latest_blob = max(blobs, key=lambda x: x.updated)
             latest_model_path_to_save = os.path.join(LOCAL_REGISTRY_PATH, latest_blob.name)
+            print(f"latest_model_path_to_save={latest_model_path_to_save}")
+            Path(latest_model_path_to_save).parent.mkdir(parents=True, exist_ok=True)
             latest_blob.download_to_filename(latest_model_path_to_save)
-
-            latest_model = keras.models.load_model(latest_model_path_to_save)
-
+            print("Download done")
+            latest_model = initialize_model(input_shape=(IMAGE_SIZE, IMAGE_SIZE, 3))
+            print("Initialization of Model")
+            latest_model.load_weights(latest_model_path_to_save)
+            print("Load Weigths OK")
+            print(latest_model)
             print("✅ Latest model downloaded from cloud storage")
 
             return latest_model
@@ -125,4 +131,5 @@ def load_model(stage="Production") -> keras.Model:
             return None
 
     else:
+        print(f"\n❌ Nothing to do in Model Load...")
         return None

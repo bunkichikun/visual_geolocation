@@ -8,8 +8,9 @@ from keras.callbacks import ModelCheckpoint, EarlyStopping
 import tensorflow as tf
 from typing import Tuple
 from colorama import Fore, Style
-from visual_geolocation.params import BATCH_SIZE, CLASS_NUMBER, EPOCHS, VAL_SPLIT
+from visual_geolocation.params import BATCH_SIZE, CLASS_NUMBER, EPOCHS, VAL_SPLIT, IMAGE_SIZE
 from visual_geolocation.utils import geocell_to_coord, class_to_geocell
+from PIL import Image
 
 
 
@@ -74,29 +75,45 @@ def initialize_model(input_shape: tuple) -> Model:
 
     # Bloc 1
     model.add(layers.Conv2D(256, (3, 3), activation="relu", padding='same'))
-    model.add(layers.BatchNormalization())
     model.add(layers.MaxPool2D(pool_size=(2, 2)))
+
+    model.add(layers.Conv2D(256, (3, 3), activation="relu", padding='same'))
+    model.add(layers.MaxPool2D(pool_size=(2, 2)))
+
 
     # Bloc 2
     model.add(layers.Conv2D(128, (3, 3), activation="relu", padding='same'))
     model.add(layers.BatchNormalization())
+    model.add(layers.Dropout(0.2))
+    model.add(layers.Conv2D(128, (3, 3), activation="relu", padding='same'))
+    model.add(layers.BatchNormalization())
+
     model.add(layers.MaxPool2D(pool_size=(2, 2)))
 
     # Bloc 3
-    model.add(layers.Conv2D(64, (3, 3), activation="relu", padding='same'))
-    model.add(layers.BatchNormalization())
-    model.add(layers.MaxPool2D(pool_size=(2, 2)))
-
+    model.add(layers.Conv2D(128, (3, 3), activation="relu", padding='same'))
     model.add(layers.GlobalAveragePooling2D())
+    model.add(layers.Dropout(0.2))
+
+    # Flatten
+    model.add(layers.Flatten())
 
     ### Fully Connected layers
     model.add(layers.Dense(128, activation='relu'))
-    model.add(layers.Dropout(0.3))
+    #model.add(layers.Dropout(0.3))
+
+    ### Fully Connected layers-2
+    model.add(layers.Dense(256, activation='relu'))
+    model.add(layers.Dropout(0.2))
+
+    ### Fully Connected layers-3
+    model.add(layers.Dense(512, activation='relu'))
 
     ### Last layer - Classification Layer with CLASS_NUMBER outputs
     model.add(layers.Dense(CLASS_NUMBER, activation='softmax'))
 
     return model
+
 
 
 def compile_model(model : Model) -> Model:
@@ -147,6 +164,14 @@ def train_model(
     return model, history
 
 
-def predict_by_id(pic_id):
-    predicted_class = 42
-    return predicted_class
+def predict_by_path(model, pic_path):
+
+    images = []
+    img = Image.open(pic_path)
+    img_array = tf.keras.utils.img_to_array(img)
+    img_array = tf.image.resize(img_array, (IMAGE_SIZE, IMAGE_SIZE))
+    images.append(img_array)
+
+    X_processed = tf.stack(images)
+    y_pred = model.predict(X_processed)
+    return y_pred

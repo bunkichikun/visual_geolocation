@@ -7,5 +7,6 @@ COPY requirements.txt requirements.txt
 RUN pip install  --no-cache-dir -r  requirements.txt
 
 COPY visual_geolocation visual_geolocation
+COPY data_for_front  data_for_front
 
 CMD uvicorn visual_geolocation.api.fast:app --reload --host 0.0.0.0 --port $PORT
