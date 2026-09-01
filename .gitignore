@@ -43,6 +43,7 @@ model/*
 *.ipynb
 *.zip
 *egg-info/*
+*.egg-info/
 
 nohup.out
 checkpoint_model*.keras
